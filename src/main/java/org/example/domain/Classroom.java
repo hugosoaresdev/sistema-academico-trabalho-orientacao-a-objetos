@@ -13,15 +13,15 @@ import java.util.List;
 
 public class Classroom {
 
-    private Long classID;
-    private String className;
-    private Teacher classTeacher;
+    private Long classroomID;
+    private String classroomName;
+    private Teacher classroomTeacher;
 
-    private List<Student> classListOfStudents = new ArrayList<>();
-    private List<Exam> classListOfExams = new ArrayList<>();
+    private List<Student> classroomListOfStudents = new ArrayList<>();
+    private List<Exam> classroomListOfExams = new ArrayList<>();
 
     public void adicionaNaListaDeProvas(Exam exam){
-        classListOfExams.add(exam);
+        classroomListOfExams.add(exam);
     }
 
 }

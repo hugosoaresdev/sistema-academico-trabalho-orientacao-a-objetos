@@ -27,7 +27,7 @@ public class Main {
             Classroom classroom = new Classroom();
             Exam exam = new Exam();
 
-            classroom.setClassTeacher(teacher);
+            classroom.setClassroomTeacher(teacher);
             classroom.adicionaNaListaDeProvas(exam);
         }
         catch (NullPointerException e){

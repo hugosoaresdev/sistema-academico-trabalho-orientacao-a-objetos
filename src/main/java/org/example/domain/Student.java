@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(of = "registrationNumber")
+
 public class Student {
     private String registrationNumber;
     private String name;
