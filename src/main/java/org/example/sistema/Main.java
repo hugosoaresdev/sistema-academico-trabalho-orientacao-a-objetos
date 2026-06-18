@@ -18,7 +18,11 @@ public class Main {
         //TESTANDO INICIAÇÃO CORRETA DO SISTEMA
 
         try{
-            //inicialização dos modelos de domínio
+            //testando conexão com Banco de Dados
+            //          código
+            //===========================================
+
+            //Testando integridade das classes
             Teacher teacher = new Teacher();
             Classroom classroom = new Classroom();
             Exam exam = new Exam();
