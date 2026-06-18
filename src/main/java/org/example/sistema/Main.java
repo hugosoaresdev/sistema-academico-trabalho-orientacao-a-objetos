@@ -3,6 +3,9 @@ package org.example.sistema;
 import org.example.domain.Classroom;
 import org.example.domain.Exam;
 import org.example.domain.Teacher;
+import org.example.menu.AdministratorMenu;
+import org.example.menu.StudentMenu;
+import org.example.menu.TeacherMenu;
 
 import java.util.InputMismatchException;
 import java.util.NoSuchElementException;
@@ -11,6 +14,8 @@ import java.util.Scanner;
 public class Main {
 
     public static void main(String[] args){
+
+        //TESTANDO INICIAÇÃO CORRETA DO SISTEMA
 
         try{
             //inicialização dos modelos de domínio
@@ -34,47 +39,48 @@ public class Main {
             System.exit(1);
         }
 
-        boolean running = true;
-        Scanner input = new Scanner(System.in);
+        //INICIALIZANDO VARIÁVEIS E MENU DO SISTEMA
 
-        while(running){
+        Scanner input = new Scanner(System.in);
+        boolean running = true;
+
+        TeacherMenu teacherMenu = new TeacherMenu();
+        StudentMenu studentMenu = new StudentMenu();
+        AdministratorMenu administratorMenu = new AdministratorMenu();
+
+        while(running) {
             System.out.println("=========================================");
-            System.out.println("       ACADEMIC SYSTEM - MAIN MENU       ");
+            System.out.println("       WELCOME TO ACADEMIC SYSTEM        ");
             System.out.println("=========================================");
-            System.out.println("1. Manage Classrooms");
-            System.out.println("2. Manage Exams");
-            System.out.println("3. View Reports");
+            System.out.println("Who are you?");
+            System.out.println("1. Administrator");
+            System.out.println("2. Teacher");
+            System.out.println("3. Student");
             System.out.println("0. Exit System");
             System.out.println("=========================================");
-            System.out.println("Chose an option: ");
+            System.out.print("Choose your profile: ");
 
             int option = -1;
 
-            try{
+            try {
                 option = input.nextInt();
                 input.nextLine(); // limpa o buffer do enter
             }
-            catch (InputMismatchException e){
+            catch (InputMismatchException e) {
                 System.out.println("Erro! Você deve digitar um número inteiro!");
                 input.nextLine();
                 continue;
             }
 
-            switch(option){
+            switch (option) {
                 case 1:
-                    System.out.println("=========================================");
-                    System.out.println("      List of available classrooms       ");
-                    System.out.println("=========================================");
+                    administratorMenu.carregarMenuAdmin(input);
                     break;
                 case 2:
-                    System.out.println("=========================================");
-                    System.out.println("      List of available exams            ");
-                    System.out.println("=========================================");
+                    teacherMenu.carregarMenuProfessor(input);
                     break;
                 case 3:
-                    System.out.println("=========================================");
-                    System.out.println("                Reports                  ");
-                    System.out.println("=========================================");
+                    studentMenu.carregarMenuEstudante(input);
                     break;
                 case 0:
                     System.out.println("Exiting...");
@@ -84,6 +90,9 @@ public class Main {
                     System.out.println("Inválid option!");
                     break;
             }
+
         }
+
     }
 }
+
