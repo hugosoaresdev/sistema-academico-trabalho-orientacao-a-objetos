@@ -1,9 +1,15 @@
 package org.example.domain;
 
 
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
 import org.junit.jupiter.api.Test;
 
+import java.util.Set;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class StudentTest {
 
@@ -25,7 +31,7 @@ public class StudentTest {
     }
 
     @Test
-    void shouldGenerateSameHashCodeForStudentsWithSameId() {
+    void deveGerarMesmoCódigoHashParaAlunosComMesmoID() {
         Student student1 = new Student("2022.1.00.01", "Pelé");
         Student student2 = new Student("2022.1.00.01", "Rivaldo");
 
