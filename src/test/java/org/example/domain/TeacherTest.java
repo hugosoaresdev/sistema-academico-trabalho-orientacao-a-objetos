@@ -7,12 +7,47 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TeacherTest {
     private final Validator validator =
             Validation.buildDefaultValidatorFactory().getValidator();
+
+    @Test
+    void deveConsiderarProfessoresComMesmaMatriculaIguais() {
+
+        Teacher teacher1 =
+                new Teacher("João", "POO", "123");
+
+        Teacher teacher2 =
+                new Teacher("Maria", "Banco de Dados", "123");
+
+        assertEquals(teacher1, teacher2);
+    }
+
+    @Test
+    void deveGerarMesmoCodigoHashParaProfessoresComMesmaMatricula() {
+
+        Teacher teacher1 =
+                new Teacher("João", "POO", "123");
+
+        Teacher teacher2 =
+                new Teacher("Maria", "Banco de Dados", "123");
+
+        assertEquals(teacher1.hashCode(), teacher2.hashCode());
+    }
+
+    @Test
+    void deveConsiderarProfessoresComMatriculasDiferentesComoDiferentes() {
+
+        Teacher teacher1 =
+                new Teacher("João", "POO", "123");
+
+        Teacher teacher2 =
+                new Teacher("João", "POO", "456");
+
+        assertNotEquals(teacher1, teacher2);
+    }
 
     @Test
     void deveInvalidarProfessorSemNome() {

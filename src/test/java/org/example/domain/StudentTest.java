@@ -73,4 +73,16 @@ public class StudentTest {
 
         assertTrue(violations.isEmpty());
     }
+
+    @Test
+    void deveConsiderarAlunosComMatriculasDiferentesComoDiferentes() {
+
+        Student student1 =
+                new Student("2025.1.01.001", "João");
+
+        Student student2 =
+                new Student("2025.1.01.002", "João");
+
+        assertNotEquals(student1, student2);
+    }
 }
