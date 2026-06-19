@@ -51,6 +51,12 @@
             <artifactId>hibernate-validator</artifactId>
             <version>9.0.1.Final</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.glassfish</groupId>
+            <artifactId>jakarta.el</artifactId>
+            <version>5.0.0-M1</version>
+        </dependency>
     </dependencies>
 
     <build>

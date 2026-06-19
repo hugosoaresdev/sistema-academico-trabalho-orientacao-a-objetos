@@ -4,6 +4,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,10 +14,15 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 
-public class Classroom {
+public class Classroom { //todo revisar: nome da classe estranho
 
+    @NotNull
     private Long classroomID;
+
+    @NotBlank
     private String classroomName;
+
+    @NotNull
     private Teacher classroomTeacher;
 
     private List<Student> classroomListOfStudents = new ArrayList<>();
