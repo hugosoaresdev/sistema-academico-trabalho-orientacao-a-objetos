@@ -1,5 +1,6 @@
 package org.example.domain;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
@@ -13,6 +14,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
+@EqualsAndHashCode(of = "classroomID")
 
 public class Classroom { //todo revisar: nome da classe estranho
 
