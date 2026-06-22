@@ -7,8 +7,10 @@ import org.example.domain.Classroom;
 import org.example.domain.Teacher;
 import org.example.exception.AcademicSystemException;
 import org.example.sistema.AcademicSystem;
+import org.example.security.User;
 
 import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -18,7 +20,10 @@ public class AdministratorMenu {
     // (@NotBlank, @NotNull) que já existem nas classes de domínio.
     // Criado uma única vez por instância do menu, em vez de recriar a cada chamada.
     private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-
+    private final User currentUser;
+    public AdministratorMenu(User currentUser) {
+        this.currentUser = currentUser;
+    }
     public void carregarMenuAdmin(Scanner input){
 
         boolean subRunning = true;
@@ -31,6 +36,7 @@ public class AdministratorMenu {
             System.out.println("2. Register New Student");
             System.out.println("3. Create New Classroom");
             System.out.println("4. Enroll Student in Class");
+            System.out.println("5. List Classrooms"); //Novo
             System.out.println("0. Back to Main Menu");
             System.out.println("=========================================");
             System.out.print("Choose an option: ");
@@ -61,6 +67,9 @@ public class AdministratorMenu {
                 case 4:
                     System.out.println("--- Registering Student in Classroom ---");
                     break;
+                case 5:                    // Adição das Lista de turma
+                    listarTurmas();
+                    break;
                 case 0:
                     System.out.println("Exiting to Main Menu...");
                     subRunning = false;
@@ -89,6 +98,12 @@ public class AdministratorMenu {
      */
     private void registrarTurma(Scanner input) {
         System.out.println("\n--- Registering Classroom ---");
+
+        // AC1/AC5: nega a operação se o usuário não for ADMIN
+        if (!currentUser.isAdmin()) {
+            System.out.println("Acesso negado: apenas administradores podem registrar turmas.");
+            return;
+        }
 
         try {
             // Lê o código da turma e já tenta converter pra número.
@@ -169,5 +184,24 @@ public class AdministratorMenu {
             }
             throw new AcademicSystemException(message.toString());
         }
+    }
+    private void listarTurmas() {
+        System.out.println("\n--- Listing Classrooms ---");
+
+        List<Classroom> classrooms = AcademicSystem.getInstance().getClassrooms();
+
+        if (classrooms.isEmpty()) {
+            System.out.println("Nenhuma turma registrada.");
+            return;
+        }
+
+        for (Classroom classroom : classrooms) {
+            System.out.println("------------------------------------------");
+            System.out.println("ID:        " + classroom.getClassroomID());
+            System.out.println("Título:    " + classroom.getClassroomName());
+            System.out.println("Professor: " + classroom.getClassroomTeacher().getName()
+                    + " (" + classroom.getClassroomTeacher().getSubject() + ")");
+        }
+        System.out.println("------------------------------------------");
     }
 }
