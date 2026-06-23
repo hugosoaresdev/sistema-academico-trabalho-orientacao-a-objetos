@@ -6,11 +6,12 @@ import org.example.domain.Teacher;
 import org.example.menu.AdministratorMenu;
 import org.example.menu.StudentMenu;
 import org.example.menu.TeacherMenu;
-import org.example.security.Authenticate;  // <- ADICIONAR
-import org.example.security.AuthException;  // <- ADICIONAR
-import org.example.security.User;           // <- ADICIONAR
+import org.example.security.Authenticate;
+import org.example.security.AuthException;
+import org.example.security.User;
+import org.example.exception.KeyboardInputException;
 
-import java.io.IOException;                 // <- ADICIONAR
+import java.io.IOException;
 import java.util.InputMismatchException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
@@ -92,7 +93,11 @@ public class Main {
                     option = input.nextInt();
                     input.nextLine();
                 } catch (InputMismatchException e) {
-                    System.out.println("Erro! Digite um número inteiro!");
+                    // US-2368 - AC1 e AC6: número inválido vira KeyboardInputException,
+                    // tratado aqui mesmo sem encerrar o app.
+                    KeyboardInputException kbEx = new KeyboardInputException(
+                            "Entrada inválida: era esperado um número inteiro.", e);
+                    System.out.println(kbEx.getMessage());
                     input.nextLine();
                     continue;
                 }
@@ -114,7 +119,11 @@ public class Main {
                         sessionRunning = false;
                         break;
                     default:
-                        System.out.println("Opção inválida!");
+                        // US-2368 - AC2: opção de menu não suportada também é
+                        // um erro de entrada de teclado, então usamos a mesma exceção.
+                        KeyboardInputException menuEx = new KeyboardInputException(
+                                "Opção de menu inválida: " + option);
+                        System.out.println(menuEx.getMessage());
                         break;
                 }
             }

@@ -1,6 +1,7 @@
 package org.example.menu;
 
 import java.util.InputMismatchException;
+import org.example.exception.KeyboardInputException;
 import java.util.Scanner;
 
 public class TeacherMenu {
@@ -26,7 +27,10 @@ public class TeacherMenu {
                 option = input.nextInt();
                 input.nextLine(); // limpa o buffer do enter
             } catch (InputMismatchException e) {
-                System.out.println("Erro! Você deve digitar um número inteiro!");
+                // US-2368 - AC1 e AC6: número inválido vira KeyboardInputException.
+                KeyboardInputException kbEx = new KeyboardInputException(
+                        "Entrada inválida: você deve digitar um número inteiro.", e);
+                System.out.println(kbEx.getMessage());
                 input.nextLine();
                 continue;
             }
@@ -46,7 +50,10 @@ public class TeacherMenu {
                     subRunning = false;
                     break;
                 default:
-                    System.out.println("Inválid option!");
+                    // US-2368 - AC2: opção de menu inválida.
+                    KeyboardInputException menuEx = new KeyboardInputException(
+                            "Opção de menu inválida: " + option);
+                    System.out.println(menuEx.getMessage());
                     break;
             }
         }
