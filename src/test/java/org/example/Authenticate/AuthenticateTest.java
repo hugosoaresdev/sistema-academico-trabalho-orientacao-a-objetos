@@ -1,6 +1,10 @@
 package org.example.Authenticate;
 
 import org.example.domain.Teacher;
+import org.example.Authenticate.SecurityException;
+import org.example.Authenticate.AuthenticationException;
+import org.example.Authenticate.AuthorizationException;
+
 import org.junit.jupiter.api.Test;
 import java.io.IOException;
 
@@ -8,36 +12,46 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class AuthenticateTest {
 
+    private final Authenticate auth = new Authenticate();
+
+    @Test
+    void testeCapturaExcecaoComoOComponentePrincipalFaria() {
+        // AC6: Simulação de captura amigável e segura no componente principal
+        try {
+            // Passamos o utilizador correto "Hugo" mas com a password errada para forçar a falha
+            auth.login("Hugo", "senha_errada");
+            fail("Deveria ter lançado uma exceção antes de chegar aqui!");
+
+        } catch (SecurityException | IOException e) {
+            System.out.println("Mensagem exibida com seguranca: " + e.getMessage());
+
+            // AC5: Verifica se a mensagem bate com o padrão definido com vírgula e se é o tipo correto (Authentication)
+            assertEquals("Erro, senha incorreta!", e.getMessage());
+            assertTrue(e instanceof AuthenticationException);
+        }
+    }
+
     @Test
     public void deveAutenticarComSucessoQuandoCredenciaisCorretas() throws IOException {
-        Authenticate auth = new Authenticate();
-
-        // Testa o cenário feliz (mude para um e-mail/senha reais do seu usuarios.txt)
+        // AC8: Garante o comportamento existente inalterado para logins válidos
         boolean resultado = auth.login("Hugo", "Ghou");
-
-        assertTrue(resultado, "O login deveria retornar true para credenciais válidas.");
+        assertTrue(resultado, "O login deveria retornar true para credenciais validas.");
     }
 
     @Test
     public void deveLancarExcecaoQuandoSenhaEstiverIncorreta() {
-        Authenticate auth = new Authenticate();
-
-        // Passamos um e-mail correto, mas a senha errada
-        // O assertThrows confirma se o sistema "explodiu" a exceção certa
-        AuthException excecao = assertThrows(AuthException.class, () -> {
-            auth.login("Alisson", "VemHexa");
+        // AC1: Senha incorreta lança AuthenticationException
+        AuthenticationException excecao = assertThrows(AuthenticationException.class, () -> {
+            auth.login("Hugo", "senha_errada");
         });
 
-        // Confirma se a mensagem de erro da exceção está correta
         assertEquals("Erro, senha incorreta!", excecao.getMessage());
     }
 
     @Test
     public void deveLancarExcecaoQuandoEmailNaoExistir() {
-        Authenticate auth = new Authenticate();
-
-        // Passamos um e-mail que sabidamente não está no arquivo TXT
-        AuthException excecao = assertThrows(AuthException.class, () -> {
+        // AC1: E-mail não localizado no TXT lança AuthenticationException
+        AuthenticationException excecao = assertThrows(AuthenticationException.class, () -> {
             auth.login("email_fantasma@email.com", "123456");
         });
 
@@ -45,15 +59,13 @@ public class AuthenticateTest {
     }
 
     // ========================================================
-    // TESTES DE AUTORIZAÇÃO E HIERARQUIA (AC3 e AC4)
+    // TESTES DE AUTORIZAÇÃO E HIERARQUIA (AC2, AC3 e AC4)
     // ========================================================
 
     @Test
     public void devePermitirProfessorAcederAoNichoDeEstudante() {
-        Authenticate auth = new Authenticate();
         Teacher professorDummy = new Teacher();
-
-        // Professor acede a STUDENT (Nível 1 >= Nível 0) -> Deve passar livremente
+        // Professor (1) acede a Student (0) -> Permitido, não deve disparar nenhuma exceção
         assertDoesNotThrow(() -> {
             auth.checkAuthorize(professorDummy, Authenticate.Role.STUDENT);
         });
@@ -61,13 +73,12 @@ public class AuthenticateTest {
 
     @Test
     public void deveBarrarProfessorSeTentarAcederAoNichoDeAdmin() {
-        Authenticate auth = new Authenticate();
         Teacher professorDummy = new Teacher();
-
-        // Professor acede a ADMIN (Nível 1 < Nível 2) -> Deve lançar AuthException
-        AuthException excecao = assertThrows(AuthException.class, () -> {
+        // AC2: Professor (1) acede a Admin (2) -> Lança obrigatoriamente AuthorizationException
+        AuthorizationException excecao = assertThrows(AuthorizationException.class, () -> {
             auth.checkAuthorize(professorDummy, Authenticate.Role.ADMIN);
         });
-    }
 
+        assertEquals("ACESSO NEGADO: usuario nao tem permissao", excecao.getMessage());
+    }
 }
