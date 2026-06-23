@@ -1,5 +1,3 @@
-Alisson;Alisson-Soares
-Hugo;Ghou
-Otavio;Betano
-Lucas;Freite
-Petroleo;Petrolina
+admin@sistema.com;admin123;ADMIN
+professor@sistema.com;prof123;TEACHER
+aluno@sistema.com;aluno123;STUDENT
