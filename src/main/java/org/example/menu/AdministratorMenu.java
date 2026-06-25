@@ -1,8 +1,6 @@
 package org.example.menu;
 
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validation;
-import jakarta.validation.Validator;
+
 import org.example.domain.Classroom;
 import org.example.domain.Teacher;
 import org.example.exception.AcademicSystemException;
@@ -19,10 +17,6 @@ import java.util.Scanner;
 
 public class AdministratorMenu {
 
-    // Validador do Jakarta Bean Validation, reaproveitando as anotações
-    // (@NotBlank, @NotNull) que já existem nas classes de domínio.
-    // Criado uma única vez por instância do menu, em vez de recriar a cada chamada.
-    private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
     // TUS-2396: validação e registro agora ficam no ClassService,
     // o menu só monta os dados lidos do teclado e delega.
@@ -143,7 +137,8 @@ public class AdministratorMenu {
             try {
                 classroomID = Long.parseLong(input.nextLine().trim());
             } catch (NumberFormatException e) {
-                throw new AcademicSystemException("Código de turma inválido: deve ser um número inteiro.");
+                throw new KeyboardInputException(
+                        "Código de turma inválido: deve ser um número inteiro.", e);
             }
 
             System.out.print("Título da turma: ");
@@ -187,9 +182,6 @@ public class AdministratorMenu {
             System.out.println("Turma registrada com sucesso: " + classroom.getClassroomID());
 
         } catch (AcademicSystemException e) {
-            // Captura qualquer erro de domínio (validação, ID duplicado,
-            // código não numérico) e mostra mensagem amigável,
-            // sem deixar o programa quebrar (mantém o menu rodando).
             System.out.println("Erro ao registrar turma: " + e.getMessage());
         } catch (KeyboardInputException e) {
             System.out.println("Erro de entrada: " + e.getMessage());
