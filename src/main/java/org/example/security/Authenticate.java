@@ -77,7 +77,7 @@ public class Authenticate {
 
                 // Senha incorreta — não inclui a senha na mensagem (AC6)
                 if (!senhaCadastrada.equals(password)) {
-                    throw new AuthException("Erro: senha incorreta.");
+                    throw new AuthenticationException("Erro: senha incorreta.");
                 }
 
                 // Converte a string do arquivo para o enum Role
@@ -85,7 +85,7 @@ public class Authenticate {
                 try {
                     role = Role.valueOf(roleCadastrada.toUpperCase());
                 } catch (IllegalArgumentException e) {
-                    throw new AuthException(
+                    throw new AuthenticationException(
                             "Erro: role inválida no arquivo de usuários: " + roleCadastrada);
                 }
 
@@ -95,7 +95,7 @@ public class Authenticate {
         }
 
         // Email não encontrado (AC2)
-        throw new AuthException("Erro: email não encontrado.");
+        throw new AuthenticationException("Erro: email não encontrado.");
     }
 
     // ==========================================
@@ -108,8 +108,8 @@ public class Authenticate {
     // Unificado num único método — funciona para qualquer role,
     // sem precisar de sobrecarga por tipo de usuário.
     public void checkAuthorize(User user, Role roleExigida) {
-        if (user.getRole() != roleExigida) {
-            throw new AuthException(
+        if (user.getRole().ordinal() < roleExigida.ordinal()) {
+            throw new AuthorizationException(
                     "ACESSO NEGADO: operação exige role " + roleExigida
                             + ", mas usuário tem role " + user.getRole() + ".");
         }

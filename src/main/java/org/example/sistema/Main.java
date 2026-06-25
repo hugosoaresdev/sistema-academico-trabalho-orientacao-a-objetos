@@ -7,7 +7,8 @@ import org.example.menu.AdministratorMenu;
 import org.example.menu.StudentMenu;
 import org.example.menu.TeacherMenu;
 import org.example.security.Authenticate;
-import org.example.security.AuthException;
+import org.example.security.AuthorizationException;
+import org.example.security.AuthenticationException;
 import org.example.security.User;
 import org.example.exception.KeyboardInputException;
 
@@ -68,7 +69,7 @@ public class Main {
                 currentUser = authenticate.login(email, senha);
                 System.out.println("Bem-vindo, " + currentUser.getUsername()
                         + " [" + currentUser.getRole() + "]");
-            } catch (AuthException e) {
+            } catch (AuthenticationException e) {
                 System.out.println("Falha no login: " + e.getMessage());
                 continue;
             } catch (IOException e) {

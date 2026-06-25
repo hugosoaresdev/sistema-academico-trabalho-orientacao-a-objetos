@@ -1,7 +1,7 @@
 package org.example.security;
 
 public enum Role {
-    ADMIN,
+    STUDENT,
     TEACHER,
-    STUDENT
+    ADMIN
 }
