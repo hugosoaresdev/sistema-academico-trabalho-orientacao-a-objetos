@@ -89,10 +89,11 @@ public class ClassroomTest {
     @Test
     void deveValidarClassroomComDadosValidos() {
 
-        Validator validator =
-                Validation.buildDefaultValidatorFactory().getValidator();
-
-        Teacher teacher = new Teacher();
+        Teacher teacher = new Teacher(
+                "Maria Silva",
+                "Orientação a Objetos",
+                "2025.1.01.001"
+        );
 
         Classroom classroom = new Classroom();
         classroom.setClassroomID(1L);

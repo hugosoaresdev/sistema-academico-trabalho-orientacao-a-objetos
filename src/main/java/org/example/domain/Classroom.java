@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.Valid;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +26,7 @@ public class Classroom { //todo revisar: nome da classe estranho
     private String classroomName;
 
     @NotNull
+    @Valid
     private Teacher classroomTeacher;
 
     private List<Student> classroomListOfStudents = new ArrayList<>();
