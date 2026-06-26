@@ -40,7 +40,7 @@ public class SecurityTest {
     @Test
     void deveLancarExcecaoQuandoSenhaEstiverIncorreta() {
 
-        AuthenticationException exception = assertThrows(AuthenticationException.class, () -> {
+        AuthenticationExceptionAcademic exception = assertThrows(AuthenticationExceptionAcademic.class, () -> {
             authService.login("admin@sistema.com", "senha_errada");
         });
 
@@ -50,7 +50,7 @@ public class SecurityTest {
     @Test
     void deveLancarExcecaoQuandoEmailNaoForEncontrado() {
 
-        AuthenticationException exception = assertThrows(AuthenticationException.class, () -> {
+        AuthenticationExceptionAcademic exception = assertThrows(AuthenticationExceptionAcademic.class, () -> {
             authService.login("inexistente@sistema.com", "admin123");
         });
 
@@ -78,7 +78,7 @@ public class SecurityTest {
 
         User professor = new User("professor@sistema.com", Role.TEACHER);
 
-        AuthorizationException exception = assertThrows(AuthorizationException.class, () -> {
+        AuthorizationExceptionAcademic exception = assertThrows(AuthorizationExceptionAcademic.class, () -> {
             authService.checkAuthorize(professor, Role.ADMIN);
         });
 

@@ -32,8 +32,18 @@ public class Classroom { //todo revisar: nome da classe estranho
     private List<Student> classroomListOfStudents = new ArrayList<>();
     private List<Exam> classroomListOfExams = new ArrayList<>();
 
+    // US-2361: lista de avaliações da turma (Exame, Tarefa Prática,
+    // Seminário, Atribuição). Separada da lista antiga de Exam, que
+    // continua existindo intocada.
+    private List<Assessment> classroomListOfAssessments = new ArrayList<>();
+
     public void adicionaNaListaDeProvas(Exam exam){
         classroomListOfExams.add(exam);
+    }
+
+    /** US-2361 - AC1/AC7: adiciona uma avaliação à turma. */
+    public void adicionaAvaliacao(Assessment assessment) {
+        classroomListOfAssessments.add(assessment);
     }
 
 }

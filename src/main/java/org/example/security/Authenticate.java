@@ -51,7 +51,7 @@ public class Authenticate {
 
     // Método público de login: recebe email e senha digitados pelo usuário,
     // compara com as linhas do arquivo TXT e retorna um User autenticado
-    // com sua Role. Lança AuthException se email ou senha estiverem errados.
+// com sua Role. Lança AuthenticationException se email ou senha estiverem errados.
     //
     // Formato esperado de cada linha do arquivo:
     //   email;senha;ROLE
@@ -77,7 +77,7 @@ public class Authenticate {
 
                 // Senha incorreta — não inclui a senha na mensagem (AC6)
                 if (!senhaCadastrada.equals(password)) {
-                    throw new AuthenticationException("Erro: senha incorreta.");
+                    throw new AuthenticationExceptionAcademic("Erro: senha incorreta.");
                 }
 
                 // Converte a string do arquivo para o enum Role
@@ -85,7 +85,7 @@ public class Authenticate {
                 try {
                     role = Role.valueOf(roleCadastrada.toUpperCase());
                 } catch (IllegalArgumentException e) {
-                    throw new AuthenticationException(
+                    throw new AuthenticationExceptionAcademic(
                             "Erro: role inválida no arquivo de usuários: " + roleCadastrada);
                 }
 
@@ -95,7 +95,7 @@ public class Authenticate {
         }
 
         // Email não encontrado (AC2)
-        throw new AuthenticationException("Erro: email não encontrado.");
+        throw new AuthenticationExceptionAcademic("Erro: email não encontrado.");
     }
 
     // ==========================================
@@ -104,12 +104,12 @@ public class Authenticate {
     // ==========================================
 
     // Checa se o usuário autenticado tem a role exigida.
-    // Lança AuthException se não tiver permissão (AC4).
+    // Lança AuthorizationException se não tiver permissão (AC4).
     // Unificado num único método — funciona para qualquer role,
     // sem precisar de sobrecarga por tipo de usuário.
     public void checkAuthorize(User user, Role roleExigida) {
         if (user.getRole().ordinal() < roleExigida.ordinal()) {
-            throw new AuthorizationException(
+            throw new AuthorizationExceptionAcademic(
                     "ACESSO NEGADO: operação exige role " + roleExigida
                             + ", mas usuário tem role " + user.getRole() + ".");
         }
