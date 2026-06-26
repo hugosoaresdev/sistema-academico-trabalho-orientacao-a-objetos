@@ -1,19 +1,24 @@
 package org.example.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(of = "examID")
 
 public class Exam {
 
     private Long examID;
+
+    @NotBlank
     private String title;
-    private double maxWeight;
+
+    @Positive
+    private double maxWeight; //todo revisar: peso ou nota máxima, máximo peso?
 
 }

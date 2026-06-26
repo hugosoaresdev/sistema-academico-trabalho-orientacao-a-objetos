@@ -1,53 +1,64 @@
 package org.example.menu;
 
+import org.example.exception.KeyboardInputException;
+import org.example.security.User;
+
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class StudentMenu {
 
-    public void carregarMenuEstudante(Scanner input){
+    private final User currentUser;
+
+    public StudentMenu(User currentUser) {
+        this.currentUser = currentUser;
+    }
+
+    /**
+     * US-2378 / US-2380 - Menu do ESTUDANTE.
+     *
+     * Mostra apenas as opções da função STUDENT, numeradas a partir
+     * de 1. Operações de ADMIN/PROFESSOR não aparecem aqui.
+     *
+     * Opções ainda não implementadas aparecem como "[Em breve]".
+     */
+    public void carregarMenuEstudante(Scanner input) {
 
         boolean subRunning = true;
 
-        while(subRunning) {
+        while (subRunning) {
             System.out.println("=========================================");
             System.out.println("     ACADEMIC SYSTEM - STUDENT MENU      ");
             System.out.println("=========================================");
-            System.out.println("1. View Grades");
-            System.out.println("2. View Upcoming Exams");
-            System.out.println("3. View Classroom Info");
-            System.out.println("0. Back to Main Menu");
+            System.out.println("1. View My Grades");
+            System.out.println("0. Logout");
             System.out.println("=========================================");
             System.out.print("Choose an option: ");
 
-            int option = -1;
-
+            int option;
             try {
                 option = input.nextInt();
-                input.nextLine(); // limpa o buffer do enter
+                input.nextLine();
             } catch (InputMismatchException e) {
-                System.out.println("Erro! Você deve digitar um número inteiro!");
+                KeyboardInputException kbEx = new KeyboardInputException(
+                        "Entrada inválida: você deve digitar um número inteiro.", e);
+                System.out.println(kbEx.getMessage());
                 input.nextLine();
                 continue;
             }
 
             switch (option) {
-                case 1:
-                    System.out.println("--- Listing Student Grades ---");;
-                    break;
-                case 2:
-                    System.out.println("--- Listing Upcoming Exams ---");
-                    break;
-                case 3:
-                    System.out.println("--- Exibing Classroom Info ---");
-                    break;
-                case 0:
-                    System.out.println("Exiting to Main Menu...");
+                case 1 -> System.out.println(
+                        "\n[Em breve] Visualização das suas notas.");
+                case 0 -> {
+                    System.out.println("Saindo...");
                     subRunning = false;
-                    break;
-                default:
-                    System.out.println("Inválid option!");
-                    break;
+                }
+                default -> {
+                    KeyboardInputException menuEx = new KeyboardInputException(
+                            "Opção de menu inválida: " + option);
+                    System.out.println(menuEx.getMessage());
+                }
             }
         }
     }

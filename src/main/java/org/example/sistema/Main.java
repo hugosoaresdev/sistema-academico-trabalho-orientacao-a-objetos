@@ -6,18 +6,22 @@ import org.example.domain.Teacher;
 import org.example.menu.AdministratorMenu;
 import org.example.menu.StudentMenu;
 import org.example.menu.TeacherMenu;
+import org.example.security.Authenticate;
+import org.example.security.AuthenticationExceptionAcademic;
+import org.example.security.User;
 
-import java.util.InputMismatchException;
+import java.io.IOException;
+
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 public class Main {
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
 
         //TESTANDO INICIAÇÃO CORRETA DO SISTEMA
 
-        try{
+        try {
             //testando conexão com Banco de Dados
             //          código
             //===========================================
@@ -29,16 +33,13 @@ public class Main {
 
             classroom.setClassroomTeacher(teacher);
             classroom.adicionaNaListaDeProvas(exam);
-        }
-        catch (NullPointerException e){
+        } catch (NullPointerException e) {
             System.out.println("Erro ao inicializar sistema, tentativa de acessar variável nula (NullPointerException)");
             System.exit(1);
-        }
-        catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             System.out.println("Erro ao inicializar sistema, método inválido passado como argumento (IllegalArgumentException)");
             System.exit(1);
-        }
-        catch (NoSuchElementException e){
+        } catch (NoSuchElementException e) {
             System.out.println("Erro ao inicializar sistema, o sistema está tentando ler algo que não existe (NoSuchElementException)");
             System.exit(1);
         }
@@ -46,57 +47,50 @@ public class Main {
         //INICIALIZANDO VARIÁVEIS E MENU DO SISTEMA
 
         Scanner input = new Scanner(System.in);
+        Authenticate authenticate = new Authenticate();
         boolean running = true;
 
-        TeacherMenu teacherMenu = new TeacherMenu();
-        StudentMenu studentMenu = new StudentMenu();
-        AdministratorMenu administratorMenu = new AdministratorMenu();
+        while (running) {
 
-        while(running) {
+            // TELA DE LOGIN
             System.out.println("=========================================");
-            System.out.println("       WELCOME TO ACADEMIC SYSTEM        ");
+            System.out.println("         ACADEMIC SYSTEM - LOGIN         ");
             System.out.println("=========================================");
-            System.out.println("Who are you?");
-            System.out.println("1. Administrator");
-            System.out.println("2. Teacher");
-            System.out.println("3. Student");
-            System.out.println("0. Exit System");
-            System.out.println("=========================================");
-            System.out.print("Choose your profile: ");
+            System.out.print("Email: ");
+            String email = input.nextLine();
 
-            int option = -1;
+            System.out.print("Senha: ");
+            String senha = input.nextLine();
 
+            User currentUser;
             try {
-                option = input.nextInt();
-                input.nextLine(); // limpa o buffer do enter
-            }
-            catch (InputMismatchException e) {
-                System.out.println("Erro! Você deve digitar um número inteiro!");
-                input.nextLine();
+                currentUser = authenticate.login(email, senha);
+                System.out.println("Bem-vindo, " + currentUser.getUsername()
+                        + " [" + currentUser.getRole() + "]");
+            } catch (AuthenticationExceptionAcademic e) {
+                System.out.println("Falha no login: " + e.getMessage());
+                continue;
+            } catch (IOException e) {
+                System.out.println("Erro ao ler arquivo de usuários: " + e.getMessage());
                 continue;
             }
 
-            switch (option) {
-                case 1:
-                    administratorMenu.carregarMenuAdmin(input);
-                    break;
-                case 2:
-                    teacherMenu.carregarMenuProfessor(input);
-                    break;
-                case 3:
-                    studentMenu.carregarMenuEstudante(input);
-                    break;
-                case 0:
-                    System.out.println("Exiting...");
-                    running = false;
-                    break;
-                default:
-                    System.out.println("Inválid option!");
-                    break;
+            // MENU POR FUNÇÃO (US-2378 / US-2380)
+            // Em vez de um menu intermediário, chamamos direto o menu da
+            // função do usuário autenticado. Cada menu mostra apenas as
+            // opções da sua função, numeradas a partir de 1.
+            if (currentUser.isAdmin()) {
+                new AdministratorMenu(currentUser).carregarMenuAdmin(input);
+            } else if (currentUser.isTeacher()) {
+                new TeacherMenu(currentUser).carregarMenuProfessor(input);
+            } else if (currentUser.isStudent()) {
+                new StudentMenu(currentUser).carregarMenuEstudante(input);
             }
 
+            // US-2379: ao sair do menu da função, a sessão é encerrada
+            // e voltamos para a tela de login.
+            System.out.println("Logout realizado. Até logo, "
+                    + currentUser.getUsername() + "!");
         }
-
     }
 }
-

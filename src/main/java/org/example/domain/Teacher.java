@@ -1,18 +1,22 @@
 package org.example.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.validation.constraints.NotBlank;
+import lombok.*;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(of = "registrationNumber")
 
 public class Teacher {
 
+    @NotBlank
     private String name;
+
+    @NotBlank
     private String subject;
+
+    @NotBlank
     private String registrationNumber;
 }
