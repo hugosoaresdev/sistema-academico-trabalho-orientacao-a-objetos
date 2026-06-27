@@ -11,7 +11,7 @@ import org.example.service.AssessmentService;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-public class AdministratorMenu {
+public class AdministratorMenu implements Menu{
 
     private final ClassService classService = new ClassService();
     private final AssessmentService assessmentService = new AssessmentService();
@@ -31,7 +31,9 @@ public class AdministratorMenu {
      * e cada operação real será ligada à sua opção quando a história
      * correspondente for implementada.
      */
-    public void carregarMenuAdmin(Scanner input) {
+
+    @Override
+    public void carregarMenu(Scanner input) {
 
         boolean subRunning = true;
 
