@@ -6,7 +6,7 @@ import org.example.security.User;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-public class TeacherMenu {
+public class TeacherMenu implements Menu{
 
     private final User currentUser;
 
@@ -26,7 +26,9 @@ public class TeacherMenu {
      * existe, e a operação real será ligada quando a história
      * correspondente for implementada.
      */
-    public void carregarMenuProfessor(Scanner input) {
+
+    @Override
+    public void carregarMenu(Scanner input) {
 
         boolean subRunning = true;
 

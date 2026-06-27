@@ -6,12 +6,11 @@ import org.example.security.User;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-public class StudentMenu {
+public class StudentMenu implements Menu{
 
     private final User currentUser;
 
-    public StudentMenu(User currentUser) {
-        this.currentUser = currentUser;
+    public StudentMenu(User currentUser) { this.currentUser = currentUser;
     }
 
     /**
@@ -22,7 +21,9 @@ public class StudentMenu {
      *
      * Opções ainda não implementadas aparecem como "[Em breve]".
      */
-    public void carregarMenuEstudante(Scanner input) {
+
+    @Override
+    public void carregarMenu(Scanner input){
 
         boolean subRunning = true;
 

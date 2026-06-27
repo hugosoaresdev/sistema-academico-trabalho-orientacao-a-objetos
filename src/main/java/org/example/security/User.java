@@ -2,6 +2,7 @@ package org.example.security;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.example.menu.*;
 
 /**
  * Representa o usuário autenticado no sistema.
@@ -12,6 +13,7 @@ import lombok.Getter;
  * TODO (US-2366): expandir conforme necessário quando a autenticação
  * completa for implementada (ex: adicionar credenciais, sessão, etc).
  */
+
 @Getter
 @AllArgsConstructor
 public class User {
@@ -29,5 +31,15 @@ public class User {
 
     public boolean isStudent() {
         return this.role == Role.STUDENT;
+    }
+
+    //Simplifica a descoberta do menu por meio de interface
+
+    public Menu getMenu() {
+        return switch (this.role) {
+            case ADMIN -> new AdministratorMenu(this);
+            case TEACHER -> new TeacherMenu(this);
+            case STUDENT -> new StudentMenu(this);
+        };
     }
 }
