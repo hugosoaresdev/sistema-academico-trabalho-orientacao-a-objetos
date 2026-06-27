@@ -3,6 +3,7 @@ package org.example.security;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.example.menu.*;
+import org.example.app.*;
 
 /**
  * Representa o usuário autenticado no sistema.
@@ -40,6 +41,14 @@ public class User {
             case ADMIN -> new AdministratorMenu(this);
             case TEACHER -> new TeacherMenu(this);
             case STUDENT -> new StudentMenu(this);
+        };
+    }
+
+    public MenuApp getMenuApp(){
+        return switch (this.role) {
+            case ADMIN -> new AdministratorMenuApp(this); // Instancia o menu gráfico do Admin
+            case TEACHER -> new TeacherMenuApp(this);     // Instancia o menu gráfico do Professor (se houver)
+            case STUDENT -> new StudentMenuApp(this);     // Instancia o menu gráfico do Aluno (se houver)
         };
     }
 }
