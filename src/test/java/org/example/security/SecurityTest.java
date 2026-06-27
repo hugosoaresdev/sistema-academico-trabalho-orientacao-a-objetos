@@ -8,13 +8,27 @@ import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.read.ListAppender;
+import org.slf4j.LoggerFactory;
+
 public class SecurityTest {
 
     private Authenticate authService;
+    private Logger logger;
+    private ListAppender<ILoggingEvent> listAppender;
 
     @BeforeEach
     void setUp() {
         authService = new Authenticate();
+
+        logger = (Logger) LoggerFactory.getLogger(Authenticate.class);
+
+        listAppender = new ListAppender<>();
+        listAppender.start();
+
+        logger.addAppender(listAppender);
     }
 
     @Test
@@ -83,5 +97,49 @@ public class SecurityTest {
         });
 
         assertTrue(exception.getMessage().contains("ACESSO NEGADO: operação exige role ADMIN"));
+    }
+
+    @Test
+    void deveRegistrarLogQuandoLoginForRealizadoComSucesso() throws IOException {
+
+        authService.login("admin@sistema.com", "admin123");
+
+        boolean encontrouLog = listAppender.list.stream()
+                .anyMatch(event ->
+                        event.getFormattedMessage().contains("Usuário autenticado com sucesso: admin@sistema.com"));
+
+        assertTrue(encontrouLog);
+    }
+
+    @Test
+    void deveRegistrarLogQuandoSenhaEstiverIncorreta() {
+
+        assertThrows(AuthenticationExceptionAcademic.class, () -> {
+            authService.login("admin@sistema.com", "senha_errada");
+        });
+
+        boolean encontrouLog = listAppender.list.stream()
+                .anyMatch(event ->
+                        event.getFormattedMessage().contains(
+                                "Falha na autenticação: senha incorreta para o usuário: admin@sistema.com"));
+
+        assertTrue(encontrouLog);
+    }
+
+    @Test
+    void deveRegistrarLogQuandoAcessoForNegado() {
+
+        User professor = new User("professor@sistema.com", Role.TEACHER);
+
+        assertThrows(AuthorizationExceptionAcademic.class, () -> {
+            authService.checkAuthorize(professor, Role.ADMIN);
+        });
+
+        boolean encontrouLog = listAppender.list.stream()
+                .anyMatch(event ->
+                        event.getFormattedMessage().contains(
+                                "Acesso negado para o usuário professor@sistema.com"));
+
+        assertTrue(encontrouLog);
     }
 }
