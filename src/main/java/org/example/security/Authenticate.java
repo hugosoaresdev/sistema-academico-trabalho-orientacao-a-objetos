@@ -122,6 +122,14 @@ public class Authenticate {
     // sem precisar de sobrecarga por tipo de usuário.
     public void checkAuthorize(User user, Role roleExigida) {
         if (user.getRole().ordinal() < roleExigida.ordinal()) {
+
+            logger.warn(
+                    "Acesso negado para o usuário {}. Role atual: {}. Role necessária: {}",
+                    user.getUsername(),
+                    user.getRole(),
+                    roleExigida
+            );
+
             throw new AuthorizationExceptionAcademic(
                     "ACESSO NEGADO: operação exige role " + roleExigida
                             + ", mas usuário tem role " + user.getRole() + ".");
