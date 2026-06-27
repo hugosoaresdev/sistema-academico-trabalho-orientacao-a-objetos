@@ -2,13 +2,21 @@ package org.example.menu;
 
 import org.example.exception.KeyboardInputException;
 import org.example.security.User;
+import org.example.service.ReportService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class TeacherMenu implements Menu{
 
+    // TUS-2394: logger para auditar a geração de relatórios.
+    private static final Logger logger =
+            LoggerFactory.getLogger(TeacherMenu.class);
+
     private final User currentUser;
+    private final ReportService reportService = new ReportService();
 
     public TeacherMenu(User currentUser) {
         this.currentUser = currentUser;
@@ -22,11 +30,7 @@ public class TeacherMenu implements Menu{
      * (registrar turma, salvar dados, configurar persistência, etc)
      * NÃO aparecem aqui (US-2378 AC3).
      *
-     * Algumas opções ainda são placeholders: a estrutura do menu já
-     * existe, e a operação real será ligada quando a história
-     * correspondente for implementada.
      */
-
     @Override
     public void carregarMenu(Scanner input) {
 
@@ -58,10 +62,20 @@ public class TeacherMenu implements Menu{
             switch (option) {
                 case 1 -> System.out.println(
                         "\n[Em breve] Listagem de turmas.");
-                case 2 -> System.out.println(
-                        "\n[Em breve] Relatório resumido de avaliações da turma.");
-                case 3 -> System.out.println(
-                        "\n[Em breve] Relatório de peso das avaliações.");
+                case 2 -> {
+                    // TUS-2394: registra a geração, incluindo a função do usuário.
+                    logger.info("Relatório gerado: resumo de avaliações | função={}",
+                            currentUser.getRole());
+                    System.out.println(
+                            "\n" + reportService.generateClassAssessmentSummaryReport());
+                }
+                case 3 -> {
+                    // TUS-2394: registra a geração, incluindo a função do usuário.
+                    logger.info("Relatório gerado: peso das avaliações | função={}",
+                            currentUser.getRole());
+                    System.out.println(
+                            "\n" + reportService.generateAssessmentWeightReport());
+                }
                 case 0 -> {
                     System.out.println("Saindo...");
                     subRunning = false;

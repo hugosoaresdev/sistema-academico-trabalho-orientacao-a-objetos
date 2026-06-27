@@ -7,18 +7,25 @@ import org.example.exception.KeyboardInputException;
 import org.example.security.User;
 import org.example.service.ClassService;
 import org.example.service.AssessmentService;
-import org.example.repository.PersistenceRepository;
-import org.example.repository.TxtPersistenceRepository;
-import org.example.sistema.AcademicSystem;
 import java.io.IOException;
-
+import org.example.service.PersistenceService;
+import org.example.repository.PersistenceType;
 import java.util.InputMismatchException;
 import java.util.Scanner;
+import org.example.service.ReportService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AdministratorMenu implements Menu{
 
+    // TUS-2394: logger para auditar a geração de relatórios.
+    private static final Logger logger =
+            LoggerFactory.getLogger(AdministratorMenu.class);
+
     private final ClassService classService = new ClassService();
     private final AssessmentService assessmentService = new AssessmentService();
+    private final PersistenceService persistenceService = new PersistenceService();
+    private final ReportService reportService = new ReportService();
     private final User currentUser;
 
     public AdministratorMenu(User currentUser) {
@@ -35,7 +42,6 @@ public class AdministratorMenu implements Menu{
      * e cada operação real será ligada à sua opção quando a história
      * correspondente for implementada.
      */
-
     @Override
     public void carregarMenu(Scanner input) {
 
@@ -76,14 +82,10 @@ public class AdministratorMenu implements Menu{
                 case 3 -> System.out.println(
                         "\n[Em breve] Listagem de turmas.");
                 case 4 -> salvarDados();
-                case 5 -> System.out.println(
-                        "\n[Em breve] Configurar tipo de persistência.");
-                case 6 -> System.out.println(
-                        "\n[Em breve] Relatório resumido de avaliações da turma.");
-                case 7 -> System.out.println(
-                        "\n[Em breve] Relatório de peso das avaliações.");
-                case 8 -> System.out.println(
-                        "\n[Em breve] Relatório de configuração de persistência.");
+                case 5 -> configurarTipoPersistencia(input);
+                case 6 -> gerarRelatorioResumoAvaliacoes();
+                case 7 -> gerarRelatorioPesoAvaliacoes();
+                case 8 -> gerarRelatorioConfiguracaoPersistencia();
                 case 0 -> {
                     System.out.println("Saindo...");
                     subRunning = false;
@@ -150,6 +152,7 @@ public class AdministratorMenu implements Menu{
             System.out.println("Erro ao registrar turma: " + e.getMessage());
         }
     }
+
     /**
      * US-2361 - Registrar avaliação numa turma existente.
      *
@@ -215,12 +218,62 @@ public class AdministratorMenu implements Menu{
             System.out.println("Erro de entrada: " + e.getMessage());
         }
     }
+
     /**
-     * TUS-2362 - Salva os dados acadêmicos em arquivo TXT.
+     * US-2372 - Configurar o tipo de persistência (TXT/XML/JSON).
      *
-     * Por enquanto usa direto o repositório TXT. Quando a US-2372
-     * (configurar tipo de persistência) e o PersistenceService
-     * (TUS-2398) existirem, a escolha do formato passa a ser dinâmica.
+     * Só ADMIN pode configurar (AC4). A escolha é delegada ao
+     * PersistenceService (AC3), que guarda o tipo ativo. Os dados
+     * acadêmicos não são alterados por essa operação (AC6).
+     */
+    private void configurarTipoPersistencia(Scanner input) {
+        System.out.println("\n--- Configure Persistence Type ---");
+
+        if (!currentUser.isAdmin()) {
+            System.out.println(
+                    "Acesso negado: apenas administradores podem configurar a persistência.");
+            return;
+        }
+
+        System.out.println("Tipo de persistência:");
+        System.out.println("  1 - TXT");
+        System.out.println("  2 - XML");
+        System.out.println("  3 - JSON");
+        System.out.print("Escolha o tipo: ");
+
+        int opcao;
+        try {
+            opcao = Integer.parseInt(input.nextLine().trim());
+        } catch (NumberFormatException e) {
+            // US-2368: erro de digitação vira KeyboardInputException.
+            System.out.println(new KeyboardInputException(
+                    "Tipo inválido: deve ser um número de 1 a 3.", e).getMessage());
+            return;
+        }
+
+        PersistenceType tipo;
+        switch (opcao) {
+            case 1 -> tipo = PersistenceType.TXT;
+            case 2 -> tipo = PersistenceType.XML;
+            case 3 -> tipo = PersistenceType.JSON;
+            default -> {
+                System.out.println(new KeyboardInputException(
+                        "Opção inválida: " + opcao).getMessage());
+                return;
+            }
+        }
+
+        // AC1/AC3: delega ao PersistenceService, que atualiza o tipo ativo.
+        persistenceService.setPersistenceType(tipo);
+        System.out.println("Tipo de persistência configurado para: " + tipo);
+    }
+
+    /**
+     * TUS-2362 / US-2372 - Salva os dados acadêmicos no formato configurado.
+     *
+     * A escolha do formato (TXT/XML/JSON) é responsabilidade do
+     * PersistenceService, que usa o tipo configurado via opção 5.
+     * O menu só dispara a operação (AC5 da US-2372).
      */
     private void salvarDados() {
         if (!currentUser.isAdmin()) {
@@ -228,12 +281,57 @@ public class AdministratorMenu implements Menu{
             return;
         }
 
-        PersistenceRepository repository = new TxtPersistenceRepository();
         try {
-            repository.save(AcademicSystem.getInstance().getClassrooms());
-            System.out.println("Dados salvos com sucesso em arquivo TXT.");
+            // US-2372 AC5: salva usando o mecanismo de persistência selecionado.
+            persistenceService.save();
+            System.out.println("Dados salvos com sucesso em formato: "
+                    + persistenceService.getPersistenceType());
         } catch (IOException e) {
             System.out.println("Erro ao salvar dados: " + e.getMessage());
         }
     }
+
+    /**
+     * US-2375 - Exibe o relatório resumido de avaliações da turma.
+     * A montagem é delegada ao ReportService (AC5); o menu só exibe.
+     */
+    private void gerarRelatorioResumoAvaliacoes() {
+        // TUS-2394: registra a geração, incluindo a função do usuário.
+        logger.info("Relatório gerado: resumo de avaliações | função={}", currentUser.getRole());
+        System.out.println("\n" + reportService.generateClassAssessmentSummaryReport());
+    }
+
+    /**
+     * US-2376 - Exibe o relatório de peso das avaliações.
+     * A montagem é delegada ao ReportService (AC6); o menu só exibe.
+     */
+    private void gerarRelatorioPesoAvaliacoes() {
+        // TUS-2394: registra a geração, incluindo a função do usuário.
+        logger.info("Relatório gerado: peso das avaliações | função={}", currentUser.getRole());
+        System.out.println("\n" + reportService.generateAssessmentWeightReport());
+    }
+
+    /**
+     * TUS-2377 - Exibe o relatório de configuração de persistência.
+     *
+     * Só ADMIN pode gerar (AC4). A lógica de montar o relatório é
+     * delegada ao ReportService (AC3); o menu só exibe o resultado.
+     * Não modifica dados acadêmicos (AC5).
+     */
+    private void gerarRelatorioConfiguracaoPersistencia() {
+        if (!currentUser.isAdmin()) {
+            System.out.println(
+                    "Acesso negado: apenas administradores podem gerar este relatório.");
+            return;
+        }
+
+        // TUS-2394: registra a geração, incluindo a função do usuário.
+        logger.info("Relatório gerado: configuração de persistência | função={}",
+                currentUser.getRole());
+
+        // AC1/AC3: delega a montagem ao ReportService e exibe.
+        String relatorio = reportService.generatePersistenceConfigurationReport();
+        System.out.println("\n" + relatorio);
+    }
+
 }

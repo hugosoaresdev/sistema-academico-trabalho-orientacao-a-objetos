@@ -6,11 +6,14 @@ import org.example.exception.AcademicSystemException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import org.example.repository.PersistenceType;
 
 public class AcademicSystem {
 
+    // TUS-2398: tipo de persistência atualmente configurado.
+    // Começa em TXT por padrão; o admin pode trocar via US-2372.
+    private PersistenceType persistenceType = PersistenceType.TXT;
     private static AcademicSystem instance;
-
     private final List<Classroom> classrooms = new ArrayList<>();
 
     private AcademicSystem() {
@@ -34,7 +37,14 @@ public class AcademicSystem {
 
         classrooms.add(classroom);
     }
+    //Persistencia de arquivo
+    public PersistenceType getPersistenceType() {
+        return persistenceType;
+    }
 
+    public void setPersistenceType(PersistenceType persistenceType) {
+        this.persistenceType = persistenceType;
+    }
     public Optional<Classroom> findClassroomById(Long classroomID) {
         return classrooms.stream()
                 .filter(c -> c.getClassroomID().equals(classroomID))
