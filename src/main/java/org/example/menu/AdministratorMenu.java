@@ -7,6 +7,10 @@ import org.example.exception.KeyboardInputException;
 import org.example.security.User;
 import org.example.service.ClassService;
 import org.example.service.AssessmentService;
+import org.example.repository.PersistenceRepository;
+import org.example.repository.TxtPersistenceRepository;
+import org.example.sistema.AcademicSystem;
+import java.io.IOException;
 
 import java.util.InputMismatchException;
 import java.util.Scanner;
@@ -69,8 +73,7 @@ public class AdministratorMenu {
                 case 2 -> registrarAvaliacao(input);
                 case 3 -> System.out.println(
                         "\n[Em breve] Listagem de turmas.");
-                case 4 -> System.out.println(
-                        "\n[Em breve] Salvar dados em arquivo (TXT/XML/JSON).");
+                case 4 -> salvarDados();
                 case 5 -> System.out.println(
                         "\n[Em breve] Configurar tipo de persistência.");
                 case 6 -> System.out.println(
@@ -208,6 +211,27 @@ public class AdministratorMenu {
             System.out.println("Erro ao registrar avaliação: " + e.getMessage());
         } catch (KeyboardInputException e) {
             System.out.println("Erro de entrada: " + e.getMessage());
+        }
+    }
+    /**
+     * TUS-2362 - Salva os dados acadêmicos em arquivo TXT.
+     *
+     * Por enquanto usa direto o repositório TXT. Quando a US-2372
+     * (configurar tipo de persistência) e o PersistenceService
+     * (TUS-2398) existirem, a escolha do formato passa a ser dinâmica.
+     */
+    private void salvarDados() {
+        if (!currentUser.isAdmin()) {
+            System.out.println("Acesso negado: apenas administradores podem salvar dados.");
+            return;
+        }
+
+        PersistenceRepository repository = new TxtPersistenceRepository();
+        try {
+            repository.save(AcademicSystem.getInstance().getClassrooms());
+            System.out.println("Dados salvos com sucesso em arquivo TXT.");
+        } catch (IOException e) {
+            System.out.println("Erro ao salvar dados: " + e.getMessage());
         }
     }
 }
