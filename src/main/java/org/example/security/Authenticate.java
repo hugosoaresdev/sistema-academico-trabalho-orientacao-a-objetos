@@ -6,7 +6,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class Authenticate {
+
+    private static final Logger logger =
+            LoggerFactory.getLogger(Authenticate.class);
 
     // TODO (US-2366): tornar o arquivo de usuários configurável via properties.
 
@@ -60,6 +66,9 @@ public class Authenticate {
     //
     // ATENÇÃO: senha nunca deve aparecer em mensagens de log (AC6 da US-2366).
     public User login(String email, String password) throws IOException {
+
+        logger.info("Tentativa de autenticação para o usuário: {}", email);
+
         ArrayList<String> listaDeUsuarios = loginUsers();
 
         for (String linha : listaDeUsuarios) {
@@ -77,6 +86,7 @@ public class Authenticate {
 
                 // Senha incorreta — não inclui a senha na mensagem (AC6)
                 if (!senhaCadastrada.equals(password)) {
+                    logger.warn("Falha na autenticação: senha incorreta para o usuário: {}", email);
                     throw new AuthenticationExceptionAcademic("Erro: senha incorreta.");
                 }
 
@@ -85,16 +95,19 @@ public class Authenticate {
                 try {
                     role = Role.valueOf(roleCadastrada.toUpperCase());
                 } catch (IllegalArgumentException e) {
+                    logger.error("Role inválida encontrada para o usuário: {}", email, e);
                     throw new AuthenticationExceptionAcademic(
                             "Erro: role inválida no arquivo de usuários: " + roleCadastrada);
                 }
 
                 // Retorna o usuário autenticado com sua role (AC1)
+                logger.info("Usuário autenticado com sucesso: {}", email, role);
                 return new User(email, role);
             }
         }
 
         // Email não encontrado (AC2)
+        logger.warn("Falha na autenticação: usuário não encontrado: {}", email);
         throw new AuthenticationExceptionAcademic("Erro: email não encontrado.");
     }
 

@@ -8,17 +8,9 @@ import org.example.domain.Teacher;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class Main {
 
-    private static final Logger logger =
-            LoggerFactory.getLogger(Main.class);
-
     public static void main(String[] args) {
-
-        logger.info("Infraestrutura de logs funcionando.");
 
         //TESTANDO INICIAÇÃO CORRETA DO SISTEMA
 
