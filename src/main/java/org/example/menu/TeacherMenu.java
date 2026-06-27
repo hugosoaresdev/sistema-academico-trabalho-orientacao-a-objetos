@@ -30,8 +30,6 @@ public class TeacherMenu implements Menu{
      * (registrar turma, salvar dados, configurar persistência, etc)
      * NÃO aparecem aqui (US-2378 AC3).
      *
-     * Os relatórios de avaliação (US-2375/US-2376) são acessíveis pelo
-     * professor, pois os ACs definem o ator como "usuário".
      */
     @Override
     public void carregarMenu(Scanner input) {

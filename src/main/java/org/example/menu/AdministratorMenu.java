@@ -19,7 +19,6 @@ import org.slf4j.LoggerFactory;
 public class AdministratorMenu implements Menu{
 
     // TUS-2394: logger para auditar a geração de relatórios.
-    // Usa SLF4J, o mesmo framework adotado no resto do projeto.
     private static final Logger logger =
             LoggerFactory.getLogger(AdministratorMenu.class);
 
