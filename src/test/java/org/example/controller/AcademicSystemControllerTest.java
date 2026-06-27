@@ -15,21 +15,25 @@ class AcademicSystemControllerTest {
     @Test
     @DisplayName("Deve delegar a exibição do menu para o objeto User correto")
     void deveDelegarParaOComportamentoDoMenuDoUsuario() {
-
-        Stage mockStage = mock(Stage.class);
-
         // ARRANGE (Configuração do cenário)
+        Stage mockStage = mock(Stage.class);
         AcademicSystemController controller = new AcademicSystemController(mockStage);
 
-        // Dublê de usuário
+        // Dublês (Mocks) do Usuário e do Menu Gráfico
         User mockUser = mock(User.class);
+        org.example.app.MenuApp mockMenuApp = mock(org.example.app.MenuApp.class);
 
+        // Configura o mock do usuário para retornar o mock do MenuApp quando getMenuApp() for chamado
+        when(mockUser.getMenuApp()).thenReturn(mockMenuApp);
 
-        //Execução da ação
+        // ACT (Execução da ação)
         controller.direcionarParaMenu(mockUser);
 
-        //(Verificação do resultado)
-        // Garante que o controlador chamou o menu exatamente 1 vez
-        verify(mockUser, times(1)).getUsername();
+        // ASSERT (Verificação do resultado)
+        // 1. Garante que o controlador pediu o menu correto para o usuário
+        verify(mockUser, times(1)).getMenuApp();
+
+        // 2. Garante que o controlador chamou o 'carregarMenu' passando o stage e o próprio controlador
+        verify(mockMenuApp, times(1)).carregarMenu(eq(mockStage), eq(controller));
     }
 }
