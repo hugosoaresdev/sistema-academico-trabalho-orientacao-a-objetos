@@ -2,7 +2,7 @@
 
 # Academic System
 
-![Java](https://img.shields.io/badge/Java-25-orange)
+![Java](https://img.shields.io/badge/Java-21-orange)
 ![Maven](https://img.shields.io/badge/Maven-3.9-blue)
 ![Docker](https://img.shields.io/badge/Docker-enabled-blue)
 ![GitHub%20Actions](https://img.shields.io/badge/GitHub%20Actions-enabled-blue)
@@ -152,24 +152,34 @@ The main educational goals of the project are:
 
 <a id="technologies"></a>
 
+## Branch Protection
+
+The `main` branch is protected using GitHub Branch Protection Rules.
+
+- Direct pushes to `main` are prohibited.
+- All changes must be submitted through Pull Requests.
+- Pull Requests require successful execution of the CI workflow before merging.
+- Pull Requests with failing builds or failing automated tests cannot be merged.
+- These rules help ensure that the `main` branch remains stable and deployable.
+
 ## Technologies
 
-| Technology | Purpose |
-|------------|---------|
-| Java SE 25 | Main programming language |
-| Maven | Dependency management and build automation |
-| Lombok | Boilerplate code reduction |
+| Technology              | Purpose |
+|-------------------------|---------|
+| Java SE 21              | Main programming language |
+| Maven                   | Dependency management and build automation |
+| Lombok                  | Boilerplate code reduction |
 | Jakarta Bean Validation | Domain validation |
-| JUnit Jupiter | Automated unit testing |
-| Mockito | Mocking framework for tests |
-| SLF4J | Logging API |
-| Logback | Logging implementation |
-| XML | Structured persistence |
-| JSON | Lightweight persistence |
-| TXT files | Simple file-based persistence |
-| JavaFX | Graphical user interface |
-| Docker | Containerized application delivery |
-| GitHub Actions | CI/CD automation |
+| JUnit Jupiter           | Automated unit testing |
+| Mockito                 | Mocking framework for tests |
+| SLF4J                   | Logging API |
+| Logback                 | Logging implementation |
+| XML                     | Structured persistence |
+| JSON                    | Lightweight persistence |
+| TXT files               | Simple file-based persistence |
+| JavaFX                  | Graphical user interface |
+| Docker                  | Containerized application delivery |
+| GitHub Actions          | CI/CD automation |
 
 [↑ Back to top](#top)
 

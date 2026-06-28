@@ -1,0 +1,16 @@
+[ {
+  "classroomID" : 9888,
+  "classroomName" : "ooop",
+  "classroomTeacher" : {
+    "name" : "popo",
+    "subject" : "poop",
+    "registrationNumber" : "9090999"
+  },
+  "classroomListOfStudents" : [ ],
+  "classroomListOfExams" : [ ],
+  "classroomListOfAssessments" : [ {
+    "value" : 10.0,
+    "weight" : 0.5,
+    "type" : "Tarefa Prática"
+  } ]
+} ]
