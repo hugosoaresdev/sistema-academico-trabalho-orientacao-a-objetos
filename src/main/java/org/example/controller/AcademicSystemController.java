@@ -9,18 +9,21 @@ import org.example.service.AssessmentService;
 import org.example.sistema.AcademicSystem;
 import java.util.List;
 import org.example.service.ReportService;
-
 import org.example.service.PersistenceService;
 import org.example.repository.PersistenceType;
 import org.example.domain.Classroom;
 import org.example.service.ClassService;
 import java.io.IOException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 public class AcademicSystemController {
 
     private final Stage stage;
     private final ReportService reportService = new ReportService();
     private Authenticate authenticate;
+    private static final Logger logger = LoggerFactory.getLogger(AcademicSystemController.class);
     private final PersistenceService persistenceService = new PersistenceService();
     private final ClassService classService = new ClassService();
     private final AssessmentService assessmentService = new AssessmentService();
@@ -104,4 +107,19 @@ public class AcademicSystemController {
     public void salvarDados() throws IOException {
         persistenceService.save();
     }
+
+    // US-2379: encerra a sessão atual e volta para a tela de login.
+    public void logout(User currentUser) {
+        // AC4: registra o logout para auditoria (TUS-2391), com usuário e função.
+        logger.info("Logout realizado | usuário={} | função={}",
+                currentUser.getUsername(), currentUser.getRole());
+
+        // AC1/AC2/AC6/AC7: troca a cena de volta para o login. O objeto do usuário
+        // deixa de ser referenciado, então os privilégios só voltam após nova
+        // autenticação (AC3). Os dados acadêmicos no Singleton ficam intactos (AC5).
+        mostrarTelaLogin();
+    }
+
 }
+
+
