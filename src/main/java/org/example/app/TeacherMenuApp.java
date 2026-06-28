@@ -51,21 +51,11 @@ public class TeacherMenuApp implements MenuApp{
         btnLogout.setStyle("-fx-text-fill: red; -fx-font-weight: bold; -fx-padding: 8 15 8 15;");
 
         // --- 3. CONFIGURANDO AS AÇÕES DOS BOTÕES (Ações do seu switch original) ---
-        btnListClassrooms.setOnAction(e -> {
-            System.out.println("\n[Em breve] Listagem de turmas gráfica.");
-        });
+        btnListClassrooms.setOnAction(e ->
+                new ClassViewApp(stage, controller, currentUser).exibir());
 
-        btnReportSummary.setOnAction(e -> {
-            // TUS-2394: mantendo sua auditoria por logger intacta
-            logger.info("Relatório gerado: resumo de avaliações | função={}", currentUser.getRole());
-            System.out.println("\n" + reportService.generateClassAssessmentSummaryReport());
-        });
-
-        btnReportWeight.setOnAction(e -> {
-            // TUS-2394: mantendo sua auditoria por logger intacta
-            logger.info("Relatório gerado: peso das avaliações | função={}", currentUser.getRole());
-            System.out.println("\n" + reportService.generateAssessmentWeightReport());
-        });
+        btnReportSummary.setOnAction(e -> new ReportApp(stage, controller, currentUser, 1).exibir());
+        btnReportWeight.setOnAction(e -> new ReportApp(stage, controller, currentUser, 2).exibir());
 
         // --- 4. ALINHAMENTO DO LOGOUT FULL DIREITA ---
         HBox containerLogout = new HBox();

@@ -64,19 +64,17 @@ public class AdministratorMenuApp implements MenuApp {
         containerLogout.getChildren().add(btnLogout);
 
         // --- 3. CONFIGURANDO AS AÇÕES DOS BOTÕES (Substitui o switch/case) ---
-        btnRegisterTemplate.setOnAction(e -> registrarTurma(stage));
-        btnRegisterAssessment.setOnAction(e -> registrarAvaliacao(stage));
+        btnRegisterTemplate.setOnAction(e -> registrarTurma(stage, controller));
+        btnRegisterAssessment.setOnAction(e -> registrarAvaliacao(stage, controller));
 
-        btnListClassrooms.setOnAction(e -> {
-            // Substitui o System.out.println provisório por um aviso ou abre a futura tela
-            System.out.println("\n[Em breve] Listagem de turmas gráfica.");
-        });
+        btnListClassrooms.setOnAction(e ->
+                new ClassViewApp(stage, controller, currentUser).exibir());
 
-        btnSaveData.setOnAction(e -> salvarDados());
-        btnConfigurePersistence.setOnAction(e -> configurarTipoPersistencia(stage));
-        btnReportSummary.setOnAction(e -> gerarRelatorioResumoAvaliacoes());
-        btnReportWeight.setOnAction(e -> gerarRelatorioPesoAvaliacoes());
-        btnReportConfig.setOnAction(e -> gerarRelatorioConfiguracaoPersistencia());
+        btnSaveData.setOnAction(e -> salvarDados(controller));
+        btnConfigurePersistence.setOnAction(e -> configurarTipoPersistencia(stage, controller));
+        btnReportSummary.setOnAction(e -> new ReportApp(stage, controller, currentUser, 1).exibir());
+        btnReportWeight.setOnAction(e -> new ReportApp(stage, controller, currentUser, 2).exibir());
+        btnReportConfig.setOnAction(e -> new ReportApp(stage, controller, currentUser, 3).exibir());
 
         btnLogout.setOnAction(e -> {
             System.out.println("Saindo do painel administrativo...");
@@ -118,22 +116,31 @@ public class AdministratorMenuApp implements MenuApp {
 
     // --- MÉTODOS DE SUPORTE (Agora adaptados para receber o Stage em vez de Scanner) ---
 
-    private void registrarTurma(Stage stage) {
-        // Aqui você chamará a classe de tela de cadastro de turma que criar
-        System.out.println("Abrindo formulário de cadastro de turma...");
+    private void registrarTurma(Stage stage, AcademicSystemController controller) {
+        new ClassRegistrationApp(stage, controller, currentUser).exibir();
     }
 
-    private void registrarAvaliacao(Stage stage) {
-        System.out.println("Abrindo formulário de cadastro de avaliações...");
+    private void registrarAvaliacao(Stage stage, AcademicSystemController controller) {
+        new AssessmentRegistrationApp(stage, controller, currentUser).exibir();
     }
 
-    private void configurarTipoPersistencia(Stage stage) {
-        System.out.println("Abrindo tela de configuração de persistência...");
+    private void configurarTipoPersistencia(Stage stage, AcademicSystemController controller) {
+        new PersistenceConfigApp(stage, controller, currentUser).exibir();
     }
 
-    private void salvarDados() {
-        // Métodos que salvam arquivos continuam funcionando de forma transparente nos bastidores!
-        System.out.println("Dados salvos com sucesso.");
+    private void salvarDados(AcademicSystemController controller) {
+        try {
+            controller.salvarDados();
+            new javafx.scene.control.Alert(
+                    javafx.scene.control.Alert.AlertType.INFORMATION,
+                    "Dados salvos com sucesso no formato " + controller.getPersistenceType() + "."
+            ).showAndWait();
+        } catch (java.io.IOException ex) {
+            new javafx.scene.control.Alert(
+                    javafx.scene.control.Alert.AlertType.ERROR,
+                    "Erro ao salvar dados: " + ex.getMessage()
+            ).showAndWait();
+        }
     }
 
     private void gerarRelatorioResumoAvaliacoes() {
