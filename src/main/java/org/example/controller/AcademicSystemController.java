@@ -1,60 +1,54 @@
 package org.example.controller;
 
-import org.example.menu.LoginMenu;
+import javafx.stage.Stage;
+import org.example.app.LoginMenuApp;
 import org.example.security.Authenticate;
 import org.example.security.AuthenticationExceptionAcademic;
 import org.example.security.User;
 
 import java.io.IOException;
-import java.util.Scanner;
 
 public class AcademicSystemController {
 
-    private Scanner input;
+    private final Stage stage;
     private Authenticate authenticate;
-    private boolean running;
 
-    public AcademicSystemController(){
-        this.input = new Scanner(System.in);
+    public AcademicSystemController(Stage stage){
+        this.stage = stage;
         this.authenticate = new Authenticate();
-        this.running = true;
     }
 
-    //Metodo principal que inicia o loop do sistema
-
+    // O metodo iniciar agora não tem while loop. Ele só joga a tela de login na janela.
     public void iniciar(){
-        while (running){
-            User currentUser = realizarLogin();
-
-            if(currentUser != null) {
-                direcionarParaMenu(currentUser);
-                System.out.println("Logout realizado. Até logo, " + currentUser.getUsername() + "!");
-            }
-        }
+        System.out.println("Iniciando interface gráfica...");
+        mostrarTelaLogin();
     }
 
-    // Cuida estritamente da tela e validação do login
+    // Metodo para exibir a tela de login
+    public void mostrarTelaLogin() {
+        LoginMenuApp loginView = new LoginMenuApp(stage, this);
+        loginView.exibir();
+    }
 
-    public User realizarLogin() {
 
-        LoginMenu currentUser = new LoginMenu(input);
-        String[] credenciais = currentUser.pedirCredenciais();
-
-        try {
-            User user = authenticate.login(credenciais[0], credenciais[1]);
+    public User processarLogin(String email, String senha) {
+        try{
+            User user = authenticate.login(email, senha);
             System.out.println("Bem-vindo, " + user.getUsername() + " [" + user.getRole() + "]");
-            return user;
-        } catch (AuthenticationExceptionAcademic e) {
-            System.out.println("Falha no login: " + e.getMessage());
-        } catch (IOException e) {
-            System.out.println("Erro ao ler arquivo de usuários: " + e.getMessage());
-        }
-        return null;
-    }
 
-    // Substitui a sequência de ifs e direciona para o menu correto
+            // Em vez de retornar para o while, nós já mandamos direcionar para o menu aqui!
+            direcionarParaMenu(user);
+            return user;
+
+        } catch (AuthenticationExceptionAcademic e) {
+            // Vamos reolançar a exceção ou tratar para a tela mostrar o erro em texto vermelho
+            throw new RuntimeException("Falha no login: " + e.getMessage());
+        } catch (IOException e) {
+            throw new RuntimeException("Erro ao ler arquivo: " + e.getMessage());
+    }
+}
 
     public void direcionarParaMenu(User currentUser){
-        currentUser.getMenu().carregarMenu(input);
+        currentUser.getMenuApp().carregarMenu(this.stage,this);
     }
 }

@@ -1,5 +1,6 @@
 package org.example.controller;
 
+import javafx.stage.Stage;
 import org.example.menu.Menu;
 import org.example.security.User;
 import org.junit.jupiter.api.DisplayName;
@@ -14,21 +15,25 @@ class AcademicSystemControllerTest {
     @Test
     @DisplayName("Deve delegar a exibição do menu para o objeto User correto")
     void deveDelegarParaOComportamentoDoMenuDoUsuario() {
-
         // ARRANGE (Configuração do cenário)
-        AcademicSystemController controller = new AcademicSystemController();
-        // Dublês de usuário e menu
+        Stage mockStage = mock(Stage.class);
+        AcademicSystemController controller = new AcademicSystemController(mockStage);
+
+        // Dublês (Mocks) do Usuário e do Menu Gráfico
         User mockUser = mock(User.class);
-        Menu mockMenu = mock(Menu.class);
+        org.example.app.MenuApp mockMenuApp = mock(org.example.app.MenuApp.class);
 
-        // Define que quando pedir o menu do usuário, retorna o nosso dublê
-        when(mockUser.getMenu()).thenReturn(mockMenu);
+        // Configura o mock do usuário para retornar o mock do MenuApp quando getMenuApp() for chamado
+        when(mockUser.getMenuApp()).thenReturn(mockMenuApp);
 
-        //Execução da ação
+        // ACT (Execução da ação)
         controller.direcionarParaMenu(mockUser);
 
-        //(Verificação do resultado)
-        // Garante que o controlador chamou o menu exatamente 1 vez
-        verify(mockMenu, times(1)).carregarMenu(any(Scanner.class));
+        // ASSERT (Verificação do resultado)
+        // 1. Garante que o controlador pediu o menu correto para o usuário
+        verify(mockUser, times(1)).getMenuApp();
+
+        // 2. Garante que o controlador chamou o 'carregarMenu' passando o stage e o próprio controlador
+        verify(mockMenuApp, times(1)).carregarMenu(eq(mockStage), eq(controller));
     }
 }
