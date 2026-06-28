@@ -26,3 +26,11 @@ jobs:
       # Passo 3: Compilar o código e rodar todos os testes automatizados
       - name: Build and Test with Maven
         run: mvn clean test
+
+      # Passo 4: Publicar o relatório de cobertura como artefato
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-coverage-report
+          path: target/site/jacoco/
