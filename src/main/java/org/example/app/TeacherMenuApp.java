@@ -5,83 +5,166 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.example.controller.AcademicSystemController;
 import org.example.security.User;
-import org.example.service.ReportService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class TeacherMenuApp implements MenuApp{
-
-    private static final Logger logger = LoggerFactory.getLogger(TeacherMenuApp.class);
+public class TeacherMenuApp implements MenuApp {
 
     private final User currentUser;
-    private final ReportService reportService = new ReportService();
 
-    public TeacherMenuApp(User user){
+    public TeacherMenuApp(User user) {
         this.currentUser = user;
     }
 
     @Override
     public void carregarMenu(Stage stage, AcademicSystemController controller) {
 
-        // --- 1. TÍTULO DO MENU ---
-        Label lblTitulo = new Label("ACADEMIC SYSTEM - TEACHER MENU");
-        lblTitulo.setStyle("-fx-font-weight: bold; -fx-font-size: 16px;" + " -fx-font-family: 'Segoe UI', Arial;");
+        //------------------------------------
+        // LOGO
+        //------------------------------------
 
-        lblTitulo.setMaxWidth(Double.MAX_VALUE);
-        lblTitulo.setAlignment(Pos.CENTER);
+        ImageView logo = new ImageView();
 
-        // --- 2. CRIANDO OS BOTÕES DE OPÇÃO ---
-        Button btnListClassrooms = new Button("1. List Classrooms");
-        Button btnReportSummary = new Button("2. View Class Assessment Report");
-        Button btnReportWeight = new Button("3. View Assessment Weight Report");
-        Button btnLogout = new Button("0. Logout");
+        try {
 
-        // Estilizando as opções comuns (largura máxima e alinhadas à esquerda)
-        for (Button btn : new Button[]{btnListClassrooms, btnReportSummary, btnReportWeight}) {
-            btn.setMaxWidth(Double.MAX_VALUE);
-            btn.setStyle("-fx-alignment: BASELINE_LEFT; -fx-padding: 8 15 8 15;");
+            logo.setImage(
+                    new Image(
+                            getClass().getResourceAsStream("/images/logo.png")
+                    )
+            );
+
+        } catch (Exception ignored) {
         }
 
-        // Estilizando o botão de Logout independente (menor)
-        btnLogout.setStyle("-fx-text-fill: red; -fx-font-weight: bold; -fx-padding: 8 15 8 15;");
+        logo.setFitWidth(110);
+        logo.setPreserveRatio(true);
 
-        // --- 3. CONFIGURANDO AS AÇÕES DOS BOTÕES (Ações do seu switch original) ---
+        //------------------------------------
+        // TÍTULO
+        //------------------------------------
+
+        Label lblTitulo = new Label("Sistema Acadêmico");
+        lblTitulo.getStyleClass().add("title");
+
+        Label lblSubtitulo = new Label("Painel do Professor");
+        lblSubtitulo.getStyleClass().add("subtitle");
+
+        //------------------------------------
+        // BOTÕES
+        //------------------------------------
+
+        Button btnListClassrooms =
+                criarBotao("📚  Listar Turmas");
+
+        Button btnReportSummary =
+                criarBotao("📊  Relatório de Avaliações");
+
+        Button btnReportWeight =
+                criarBotao("📈  Relatório de Pesos");
+
+        Button btnLogout = new Button("Logout");
+
+        btnLogout.setMaxWidth(Double.MAX_VALUE);
+        btnLogout.getStyleClass().add("logout-button");
+
+        //------------------------------------
+        // EVENTOS
+        //------------------------------------
+
         btnListClassrooms.setOnAction(e ->
                 new ClassViewApp(stage, controller, currentUser).exibir());
 
-        btnReportSummary.setOnAction(e -> new ReportApp(stage, controller, currentUser, 1).exibir());
-        btnReportWeight.setOnAction(e -> new ReportApp(stage, controller, currentUser, 2).exibir());
+        btnReportSummary.setOnAction(e ->
+                new ReportApp(stage, controller, currentUser, 1).exibir());
 
-        // --- 4. ALINHAMENTO DO LOGOUT FULL DIREITA ---
-        HBox containerLogout = new HBox();
-        containerLogout.setAlignment(Pos.CENTER_RIGHT); // Força o botão a ir para o extremo direito
-        containerLogout.getChildren().add(btnLogout);
+        btnReportWeight.setOnAction(e ->
+                new ReportApp(stage, controller, currentUser, 2).exibir());
 
-        // --- 5. ORGANIZANDO O LAYOUT PRINCIPAL (VBox) ---
-        VBox layout = new VBox(12); // Espaçamento consistente entre as linhas
-        layout.setPadding(new Insets(25, 40, 25, 40)); // Mesmas margens internas
-        layout.setStyle("-fx-background-color: #f4f4f4;");
+        btnLogout.setOnAction(e ->
+                controller.logout(currentUser));
 
-        // Adiciona todos na ordem correta
-        layout.getChildren().addAll(
+        //------------------------------------
+        // ESPAÇADOR
+        //------------------------------------
+
+        Region spacer = new Region();
+        VBox.setVgrow(spacer, Priority.ALWAYS);
+
+        //------------------------------------
+        // CARD
+        //------------------------------------
+
+        VBox card = new VBox(12);
+
+        card.setAlignment(Pos.TOP_CENTER);
+
+        card.getStyleClass().add("card");
+
+        card.getChildren().addAll(
+
+                logo,
+
                 lblTitulo,
+
+                lblSubtitulo,
+
                 btnListClassrooms,
+
                 btnReportSummary,
+
                 btnReportWeight,
-                containerLogout // Container que joga o logout na direita
+
+                spacer,
+
+                btnLogout
+
         );
 
-        // --- CONFIGURANDO A AÇÃO DE LOGOUT (US-2379) ---
-        btnLogout.setOnAction(e -> controller.logout(currentUser));
+        //------------------------------------
+        // ROOT
+        //------------------------------------
 
-        // --- 6. RENDERIZANDO A CENA ---
-        Scene cenaMenu = new Scene(layout, 450, 320); // Resolução sob medida para o menu do professor
-        stage.setScene(cenaMenu);
-        stage.setTitle("Academic System - Teacher Panel");
+        StackPane root = new StackPane(card);
+
+        root.setPadding(new Insets(30));
+
+        Scene scene = new Scene(root, 600, 600);
+
+        scene.getStylesheets().add(
+                getClass()
+                        .getResource("/css/style.css")
+                        .toExternalForm()
+        );
+
+        stage.setTitle("Sistema Acadêmico");
+
+        stage.getIcons().add(
+                new Image(
+                        getClass().getResourceAsStream("/images/logo.png")
+                )
+        );
+
+        stage.setScene(scene);
+    }
+
+    /**
+     * Cria um botão padrão para o menu.
+     */
+    private Button criarBotao(String texto) {
+
+        Button button = new Button(texto);
+
+        button.setMaxWidth(Double.MAX_VALUE);
+
+        button.getStyleClass().add("menu-button");
+
+        return button;
     }
 }
