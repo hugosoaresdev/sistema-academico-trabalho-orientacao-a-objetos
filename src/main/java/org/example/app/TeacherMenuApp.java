@@ -76,11 +76,8 @@ public class TeacherMenuApp implements MenuApp{
                 containerLogout // Container que joga o logout na direita
         );
 
-        // --- CONFIGURANDO A AÇÃO DE LOGOUT ---
-        btnLogout.setOnAction(e -> {
-            System.out.println("Fazendo logout e retornando para a tela de login...");
-            controller.mostrarTelaLogin();
-        });
+        // --- CONFIGURANDO A AÇÃO DE LOGOUT (US-2379) ---
+        btnLogout.setOnAction(e -> controller.logout(currentUser));
 
         // --- 6. RENDERIZANDO A CENA ---
         Scene cenaMenu = new Scene(layout, 450, 320); // Resolução sob medida para o menu do professor

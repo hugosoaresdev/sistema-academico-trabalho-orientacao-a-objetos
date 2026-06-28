@@ -76,13 +76,6 @@ public class AdministratorMenuApp implements MenuApp {
         btnReportWeight.setOnAction(e -> new ReportApp(stage, controller, currentUser, 2).exibir());
         btnReportConfig.setOnAction(e -> new ReportApp(stage, controller, currentUser, 3).exibir());
 
-        btnLogout.setOnAction(e -> {
-            System.out.println("Saindo do painel administrativo...");
-            // Como combinamos no controlador, aqui você pode voltar para a tela de login.
-            // Para fazer isso da forma mais limpa, recarregamos a tela de login pelo controlador:
-            // stage.close(); ou chamar a tela de login inicial novamente.
-        });
-
         // --- 4. ORGANIZANDO O LAYOUT GRÁFICO (VBox) ---
         VBox layout = new VBox(10); // 10 pixels de espaço entre cada botão
         layout.setPadding(new Insets(25, 40, 25, 40)); // Margens da borda da janela
@@ -102,11 +95,8 @@ public class AdministratorMenuApp implements MenuApp {
                 btnLogout
         );
 
-        // --- CONFIGURANDO A AÇÃO DE LOGOUT ---
-        btnLogout.setOnAction(e -> {
-            System.out.println("Fazendo logout e retornando para a tela de login...");
-            controller.mostrarTelaLogin();
-        });
+        // --- CONFIGURANDO A AÇÃO DE LOGOUT (US-2379) ---
+        btnLogout.setOnAction(e -> controller.logout(currentUser));
 
         // --- 5. RENDERIZANDO A CENA ---
         Scene cenaMenu = new Scene(layout, 480, 500); // Resolução confortável para caber as 9 opções
