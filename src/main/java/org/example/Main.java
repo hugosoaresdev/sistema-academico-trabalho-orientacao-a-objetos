@@ -7,6 +7,7 @@ import org.example.app.AcademicSystemApp;
  */
 public final class Main {
 
+
     private Main() {
         // Impede a instanciação da classe.
     }
