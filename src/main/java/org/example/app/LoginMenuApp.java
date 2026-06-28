@@ -1,11 +1,14 @@
 package org.example.app;
 
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.example.controller.AcademicSystemController;
@@ -22,57 +25,98 @@ public class LoginMenuApp {
 
     public void exibir() {
 
-        // --- ELEMENTOS VISUAIS ---
+        // ---------- LOGO ----------
 
-        Label lblTitulo = new Label("ACADEMIC SYSTEM - LOGIN");
-        lblTitulo.setStyle("-fx-font-weight: bold; -fx-font-size: 16px; -fx-font-family: 'Segoe UI', Arial;");
-        lblTitulo.setMaxWidth(Double.MAX_VALUE);
-        lblTitulo.setAlignment(javafx.geometry.Pos.CENTER);
+        Image logo = new Image(
+                getClass().getResourceAsStream("/images/logo.png")
+        );
 
-        Label lblEmail = new Label("Email:");
+        ImageView logoView = new ImageView(logo);
+        logoView.setFitWidth(90);
+        logoView.setPreserveRatio(true);
+
+        // ---------- TÍTULO ----------
+
+        Label titulo = new Label("Sistema Acadêmico");
+        titulo.getStyleClass().add("titulo");
+
+        Label subtitulo = new Label("Faça login para continuar");
+        subtitulo.getStyleClass().add("subtitulo");
+
+        // ---------- CAMPOS ----------
+
+        Label lblEmail = new Label("E-mail");
         TextField txtEmail = new TextField();
-        txtEmail.setPromptText("Digite seu email");
+        txtEmail.setPromptText("Informe seu e-mail");
 
-        Label lblSenha = new Label("Senha:");
+        Label lblSenha = new Label("Senha");
         PasswordField txtSenha = new PasswordField();
-        txtSenha.setPromptText("Digite sua senha");
+        txtSenha.setPromptText("Informe sua senha");
+
+        // ---------- BOTÃO ----------
 
         Button btnEntrar = new Button("Entrar");
+        btnEntrar.setMaxWidth(Double.MAX_VALUE);
+
+        // ---------- MENSAGEM ----------
 
         Label lblMensagem = new Label();
 
-        // O CLIQUE DO BOTÃO (Substitui o Scanner e o return)
-        btnEntrar.setOnAction(e -> {
-            String email = txtEmail.getText();
-            String senha = txtSenha.getText();
+        // ---------- EVENTO ----------
+
+        btnEntrar.setOnAction(event -> {
 
             try {
-                //Passando os dados pro controlador
-                controller.processarLogin(email, senha);
 
-                lblMensagem.setText("Login efetuado com sucesso!");
-                lblMensagem.setStyle("-fx-text-fill: green;");
-            }catch (Exception ex){
-                lblMensagem.setText("Email ou senha incorretos.");
-                lblMensagem.setStyle("-fx-text-fill: red;");
+                controller.processarLogin(
+                        txtEmail.getText(),
+                        txtSenha.getText()
+                );
+
+                lblMensagem.setText("Login realizado com sucesso.");
+                lblMensagem.setStyle("-fx-text-fill: #2E7D32;");
+
+            } catch (Exception ex) {
+
+                lblMensagem.setText("E-mail ou senha inválidos.");
+                lblMensagem.setStyle("-fx-text-fill: #C62828;");
             }
         });
 
-        // Organização do Layout
+        txtSenha.setOnAction(event -> btnEntrar.fire());
+
+        // ---------- LAYOUT ----------
+
         VBox layout = new VBox(12);
-        layout.setPadding(new Insets(30, 25, 30, 25));
-        layout.setStyle("-fx-padding: 40;-fx-background-color: #f4f4f4;");
+        layout.setAlignment(Pos.CENTER);
+        layout.setPadding(new Insets(35));
+
+        layout.getStyleClass().add("root");
 
         layout.getChildren().addAll(
-                lblTitulo,
-                lblEmail, txtEmail,
-                lblSenha, txtSenha,
+                logoView,
+                titulo,
+                subtitulo,
+                lblEmail,
+                txtEmail,
+                lblSenha,
+                txtSenha,
                 btnEntrar,
                 lblMensagem
         );
 
-        Scene cenaLogin = new Scene(layout, 380, 320);
-        stage.setScene(cenaLogin);
-        stage.setTitle("Academic System - Autenticação");
+        Scene scene = new Scene(layout, 420, 500);
+
+        scene.getStylesheets().add(
+                getClass().getResource("/css/style.css").toExternalForm()
+        );
+
+        stage.setTitle("Sistema Acadêmico");
+        stage.getIcons().add(
+                new Image(getClass().getResourceAsStream("/images/logo.png"))
+        );
+        stage.setScene(scene);
+
+        txtEmail.requestFocus();
     }
 }

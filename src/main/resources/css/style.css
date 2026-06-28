@@ -1,0 +1,68 @@
+.root{
+    -fx-font-family: "Segoe UI";
+    -fx-background-color: linear-gradient(to bottom,#f8f9fb,#edf1f5);
+    -fx-padding:30;
+}
+
+.titulo{
+    -fx-font-size:24px;
+    -fx-font-weight:bold;
+    -fx-text-fill:#1F3A5F;
+}
+
+.subtitulo{
+    -fx-font-size:13px;
+    -fx-text-fill:#6B7280;
+}
+
+.menu-title{
+    -fx-font-size:22px;
+    -fx-font-weight:bold;
+    -fx-text-fill:#1F3A5F;
+}
+
+.menu-user{
+    -fx-font-size:13px;
+    -fx-text-fill:#5A5A5A;
+}
+
+.label{
+    -fx-font-size:14px;
+}
+
+.text-field,
+.password-field{
+    -fx-font-size:14px;
+    -fx-background-radius:8;
+    -fx-border-radius:8;
+    -fx-padding:10;
+}
+
+.button{
+    -fx-font-size:14px;
+    -fx-font-weight:bold;
+    -fx-background-radius:8;
+    -fx-padding:10;
+    -fx-cursor:hand;
+}
+
+.button:hover{
+    -fx-background-color:#1F6FEB;
+    -fx-text-fill:white;
+}
+
+.logout-button{
+    -fx-background-color:#D32F2F;
+    -fx-text-fill:white;
+}
+
+.logout-button:hover{
+    -fx-background-color:#B71C1C;
+}
+
+.card{
+    -fx-background-color:white;
+    -fx-background-radius:12;
+    -fx-padding:25;
+    -fx-effect:dropshadow(gaussian, rgba(0,0,0,0.10),12,0,0,4);
+}

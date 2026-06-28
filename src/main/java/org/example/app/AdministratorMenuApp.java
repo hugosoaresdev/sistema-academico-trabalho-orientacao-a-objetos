@@ -1,14 +1,18 @@
 package org.example.app;
 
-import org.example.controller.AcademicSystemController;
-import org.example.security.User;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.example.controller.AcademicSystemController;
+import org.example.security.User;
 
 public class AdministratorMenuApp implements MenuApp {
 
@@ -21,138 +25,136 @@ public class AdministratorMenuApp implements MenuApp {
     @Override
     public void carregarMenu(Stage stage, AcademicSystemController controller) {
 
-        // --- 1. TÍTULO DO MENU ---
+        // ---------- LOGO ----------
 
-        Label lblTitulo = new Label("ACADEMIC SYSTEM - ADMINISTRATOR MENU");
-        lblTitulo.setStyle("-fx-font-weight: bold; -fx-font-size: 16px;" + " -fx-font-family: 'Segoe UI', Arial;");
+        ImageView logo = new ImageView(
+                new Image(getClass().getResourceAsStream("/images/logo.png"))
+        );
+        logo.setFitWidth(80);
+        logo.setPreserveRatio(true);
 
-        lblTitulo.setMaxWidth(Double.MAX_VALUE);
-        lblTitulo.setAlignment(Pos.CENTER);
+        // ---------- TÍTULO ----------
 
-        // --- 2. CRIANDO OS BOTÕES DE OPÇÃO ---
+        Label titulo = new Label("Sistema Acadêmico");
+        titulo.getStyleClass().add("menu-title");
 
-        Button btnRegisterTemplate = new Button("1. Register Classroom");
-        Button btnRegisterAssessment = new Button("2. Register Assessment in Classroom");
-        Button btnListClassrooms = new Button("3. List Classrooms");
-        Button btnSaveData = new Button("4. Save Data to File");
-        Button btnConfigurePersistence = new Button("5. Configure Persistence Type");
-        Button btnReportSummary = new Button("6. Class Assessment Report");
-        Button btnReportWeight = new Button("7. Assessment Weight Report");
-        Button btnReportConfig = new Button("8. Persistence Configuration Report");
-        Button btnLogout = new Button("0. Logout");
+        Label perfil = new Label("Administrador");
+        perfil.getStyleClass().add("subtitulo");
 
-        // Estilizando os botões para ocuparem a largura ideal e ficarem organizados
-        for (Button btn : new Button[]{
-                btnRegisterTemplate,
-                btnRegisterAssessment,
-                btnListClassrooms,
-                btnSaveData,
-                btnConfigurePersistence,
-                btnReportSummary,
-                btnReportWeight,
-                btnReportConfig}
-        ) {
-            btn.setMaxWidth(Double.MAX_VALUE); // Faz todos os botões terem o mesmo tamanho horizontal
-            btn.setStyle("-fx-alignment: BASELINE_LEFT; -fx-padding: 8 15 8 15;"); // Alinha o texto deles à esquerda internamente
+        Label usuario = new Label("Usuário: " + currentUser.getUsername());
+        usuario.getStyleClass().add("menu-user");
+
+        // ---------- BOTÕES ----------
+
+        Button btnCadastrarTurma = new Button("Cadastrar turma");
+        Button btnCadastrarAvaliacao = new Button("Cadastrar avaliação");
+        Button btnListarTurmas = new Button("Listar turmas");
+        Button btnSalvar = new Button("Salvar dados");
+        Button btnPersistencia = new Button("Configurar persistência");
+        Button btnRelatorioResumo = new Button("Relatório das avaliações");
+        Button btnRelatorioPeso = new Button("Relatório dos pesos");
+        Button btnRelatorioPersistencia = new Button("Relatório da persistência");
+
+        Button btnSair = new Button("Sair");
+        btnSair.getStyleClass().add("logout-button");
+
+        Button[] botoes = {
+                btnCadastrarTurma,
+                btnCadastrarAvaliacao,
+                btnListarTurmas,
+                btnSalvar,
+                btnPersistencia,
+                btnRelatorioResumo,
+                btnRelatorioPeso,
+                btnRelatorioPersistencia
+        };
+
+        for (Button botao : botoes) {
+            botao.setMaxWidth(Double.MAX_VALUE);
         }
 
-        // Estilo especial para o botão de Logout se destacar
-        btnLogout.setStyle("-fx-alignment: CENTER; -fx-text-fill: red; -fx-font-weight: bold; -fx-padding: 8;");
-        // Criamos uma caixinha horizontal (HBox) só para o Logout e mandamos ela alinhar tudo à DIREITA
-        javafx.scene.layout.HBox containerLogout = new javafx.scene.layout.HBox();
-        containerLogout.setAlignment(javafx.geometry.Pos.CENTER_RIGHT); // Joga o conteúdo full direita
-        containerLogout.getChildren().add(btnLogout);
+        // ---------- AÇÕES ----------
 
-        // --- 3. CONFIGURANDO AS AÇÕES DOS BOTÕES (Substitui o switch/case) ---
-        btnRegisterTemplate.setOnAction(e -> registrarTurma(stage, controller));
-        btnRegisterAssessment.setOnAction(e -> registrarAvaliacao(stage, controller));
+        btnCadastrarTurma.setOnAction(e ->
+                new ClassRegistrationApp(stage, controller, currentUser).exibir());
 
-        btnListClassrooms.setOnAction(e ->
+        btnCadastrarAvaliacao.setOnAction(e ->
+                new AssessmentRegistrationApp(stage, controller, currentUser).exibir());
+
+        btnListarTurmas.setOnAction(e ->
                 new ClassViewApp(stage, controller, currentUser).exibir());
 
-        btnSaveData.setOnAction(e -> salvarDados(controller));
-        btnConfigurePersistence.setOnAction(e -> configurarTipoPersistencia(stage, controller));
-        btnReportSummary.setOnAction(e -> new ReportApp(stage, controller, currentUser, 1).exibir());
-        btnReportWeight.setOnAction(e -> new ReportApp(stage, controller, currentUser, 2).exibir());
-        btnReportConfig.setOnAction(e -> new ReportApp(stage, controller, currentUser, 3).exibir());
+        btnPersistencia.setOnAction(e ->
+                new PersistenceConfigApp(stage, controller, currentUser).exibir());
 
-        btnLogout.setOnAction(e -> {
-            System.out.println("Saindo do painel administrativo...");
-            // Como combinamos no controlador, aqui você pode voltar para a tela de login.
-            // Para fazer isso da forma mais limpa, recarregamos a tela de login pelo controlador:
-            // stage.close(); ou chamar a tela de login inicial novamente.
+        btnRelatorioResumo.setOnAction(e ->
+                new ReportApp(stage, controller, currentUser, 1).exibir());
+
+        btnRelatorioPeso.setOnAction(e ->
+                new ReportApp(stage, controller, currentUser, 2).exibir());
+
+        btnRelatorioPersistencia.setOnAction(e ->
+                new ReportApp(stage, controller, currentUser, 3).exibir());
+
+        btnSalvar.setOnAction(e -> {
+            try {
+
+                controller.salvarDados();
+
+                new javafx.scene.control.Alert(
+                        javafx.scene.control.Alert.AlertType.INFORMATION,
+                        "Dados salvos com sucesso."
+                ).showAndWait();
+
+            } catch (Exception ex) {
+
+                new javafx.scene.control.Alert(
+                        javafx.scene.control.Alert.AlertType.ERROR,
+                        ex.getMessage()
+                ).showAndWait();
+            }
         });
 
-        // --- 4. ORGANIZANDO O LAYOUT GRÁFICO (VBox) ---
-        VBox layout = new VBox(10); // 10 pixels de espaço entre cada botão
-        layout.setPadding(new Insets(25, 40, 25, 40)); // Margens da borda da janela
-        layout.setStyle("-fx-background-color: #f4f4f4;");
+        btnSair.setOnAction(e -> controller.mostrarTelaLogin());
 
-        // Adiciona todos os componentes criados ao layout na ordem correta
+        // ---------- LAYOUT ----------
+
+        Region espacador = new Region();
+        VBox.setVgrow(espacador, Priority.ALWAYS);
+
+        VBox layout = new VBox(12);
+
+        layout.setAlignment(Pos.TOP_CENTER);
+        layout.setPadding(new Insets(30));
+
+        layout.getStyleClass().add("root");
+
         layout.getChildren().addAll(
-                lblTitulo,
-                btnRegisterTemplate,
-                btnRegisterAssessment,
-                btnListClassrooms,
-                btnSaveData,
-                btnConfigurePersistence,
-                btnReportSummary,
-                btnReportWeight,
-                btnReportConfig,
-                btnLogout
+                logo,
+                titulo,
+                perfil,
+                usuario,
+
+                btnCadastrarTurma,
+                btnCadastrarAvaliacao,
+                btnListarTurmas,
+                btnSalvar,
+                btnPersistencia,
+                btnRelatorioResumo,
+                btnRelatorioPeso,
+                btnRelatorioPersistencia,
+
+                espacador,
+                btnSair
         );
 
-        // --- CONFIGURANDO A AÇÃO DE LOGOUT ---
-        btnLogout.setOnAction(e -> {
-            System.out.println("Fazendo logout e retornando para a tela de login...");
-            controller.mostrarTelaLogin();
-        });
+        Scene scene = new Scene(layout, 520, 640);
 
-        // --- 5. RENDERIZANDO A CENA ---
-        Scene cenaMenu = new Scene(layout, 480, 500); // Resolução confortável para caber as 9 opções
-        stage.setScene(cenaMenu);
-        stage.setTitle("Academic System - Administrator Panel");
+        scene.getStylesheets().add(
+                getClass().getResource("/css/style.css").toExternalForm()
+        );
+
+        stage.setTitle("Sistema Acadêmico");
+        stage.setScene(scene);
     }
-
-    // --- MÉTODOS DE SUPORTE (Agora adaptados para receber o Stage em vez de Scanner) ---
-
-    private void registrarTurma(Stage stage, AcademicSystemController controller) {
-        new ClassRegistrationApp(stage, controller, currentUser).exibir();
-    }
-
-    private void registrarAvaliacao(Stage stage, AcademicSystemController controller) {
-        new AssessmentRegistrationApp(stage, controller, currentUser).exibir();
-    }
-
-    private void configurarTipoPersistencia(Stage stage, AcademicSystemController controller) {
-        new PersistenceConfigApp(stage, controller, currentUser).exibir();
-    }
-
-    private void salvarDados(AcademicSystemController controller) {
-        try {
-            controller.salvarDados();
-            new javafx.scene.control.Alert(
-                    javafx.scene.control.Alert.AlertType.INFORMATION,
-                    "Dados salvos com sucesso no formato " + controller.getPersistenceType() + "."
-            ).showAndWait();
-        } catch (java.io.IOException ex) {
-            new javafx.scene.control.Alert(
-                    javafx.scene.control.Alert.AlertType.ERROR,
-                    "Erro ao salvar dados: " + ex.getMessage()
-            ).showAndWait();
-        }
-    }
-
-    private void gerarRelatorioResumoAvaliacoes() {
-        System.out.println("Gerando relatório 1...");
-    }
-
-    private void gerarRelatorioPesoAvaliacoes() {
-        System.out.println("Gerando relatório 2...");
-    }
-
-    private void gerarRelatorioConfiguracaoPersistencia() {
-        System.out.println("Gerando relatório 3...");
-    }
-
 }

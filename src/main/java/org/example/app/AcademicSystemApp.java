@@ -1,7 +1,6 @@
 package org.example.app;
 
 import javafx.application.Application;
-
 import javafx.stage.Stage;
 import org.example.controller.AcademicSystemController;
 import org.example.domain.Classroom;
@@ -13,11 +12,25 @@ import java.util.NoSuchElementException;
 public class AcademicSystemApp extends Application {
 
     @Override
-    public void start(Stage primaryStage){
+    public void start(Stage primaryStage) {
 
-        // --- 1. TESTES DE INTEGRIDADE ---
+        verificarIntegridade();
+
+        AcademicSystemController controller =
+                new AcademicSystemController(primaryStage);
+
+        controller.iniciar();
+        primaryStage.show();
+    }
+
+    /**
+     * Executa verificações básicas das entidades antes da inicialização
+     * da interface gráfica.
+     */
+    private void verificarIntegridade() {
+
         try {
-            //Testando integridade das classes
+
             Teacher teacher = new Teacher();
             Classroom classroom = new Classroom();
             Exam exam = new Exam();
@@ -26,22 +39,32 @@ public class AcademicSystemApp extends Application {
             classroom.adicionaNaListaDeProvas(exam);
 
         } catch (NullPointerException e) {
-            System.out.println("Erro ao inicializar sistema, tentativa de acessar variável nula (NullPointerException)");
-            System.exit(1);
+
+            encerrarAplicacao(
+                    "Erro de inicialização: referência nula encontrada."
+            );
+
         } catch (IllegalArgumentException e) {
-            System.out.println("Erro ao inicializar sistema, método inválido passado como argumento (IllegalArgumentException)");
-            System.exit(1);
+
+            encerrarAplicacao(
+                    "Erro de inicialização: argumento inválido."
+            );
+
         } catch (NoSuchElementException e) {
-            System.out.println("Erro ao inicializar sistema, o sistema está tentando ler algo que não existe (NoSuchElementException)");
-            System.exit(1);
+
+            encerrarAplicacao(
+                    "Erro de inicialização: elemento inexistente."
+            );
         }
+    }
 
-        // --- 2. INICIALIZANDO INFRAESTRUTURA GRÁFICA ---
+    /**
+     * Exibe a mensagem de erro e encerra a aplicação.
+     */
+    private void encerrarAplicacao(String mensagem) {
 
-        AcademicSystemController controller = new AcademicSystemController(primaryStage);
-        controller.iniciar();
-        primaryStage.show();
-
+        System.err.println(mensagem);
+        System.exit(1);
     }
 
     public static void main(String[] args) {

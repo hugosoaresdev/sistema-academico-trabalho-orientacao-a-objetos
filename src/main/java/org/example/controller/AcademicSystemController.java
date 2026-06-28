@@ -2,106 +2,149 @@ package org.example.controller;
 
 import javafx.stage.Stage;
 import org.example.app.LoginMenuApp;
+import org.example.domain.Classroom;
+import org.example.repository.PersistenceType;
 import org.example.security.Authenticate;
 import org.example.security.AuthenticationExceptionAcademic;
 import org.example.security.User;
 import org.example.service.AssessmentService;
-import org.example.sistema.AcademicSystem;
-import java.util.List;
-import org.example.service.ReportService;
-
-import org.example.service.PersistenceService;
-import org.example.repository.PersistenceType;
-import org.example.domain.Classroom;
 import org.example.service.ClassService;
+import org.example.service.PersistenceService;
+import org.example.service.ReportService;
+import org.example.sistema.AcademicSystem;
+
 import java.io.IOException;
+import java.util.List;
 
 public class AcademicSystemController {
 
     private final Stage stage;
+
+    private final Authenticate authenticate = new Authenticate();
     private final ReportService reportService = new ReportService();
-    private Authenticate authenticate;
     private final PersistenceService persistenceService = new PersistenceService();
     private final ClassService classService = new ClassService();
     private final AssessmentService assessmentService = new AssessmentService();
-    // TUS-2413 (AC5): a tela de visualização pega os dados por aqui,
-    // em vez de acessar o AcademicSystem diretamente.
-    public List<Classroom> listarTurmas() {
-        return AcademicSystem.getInstance().getClassrooms();
-    }
 
-    public AcademicSystemController(Stage stage){
+    public AcademicSystemController(Stage stage) {
         this.stage = stage;
-        this.authenticate = new Authenticate();
     }
 
-    // O metodo iniciar agora não tem while loop. Ele só joga a tela de login na janela.
-    public void iniciar(){
+    // ==========================================================
+    // INICIALIZAÇÃO
+    // ==========================================================
+
+    public void iniciar() {
         System.out.println("Iniciando interface gráfica...");
         mostrarTelaLogin();
     }
 
-    // Metodo para exibir a tela de login
     public void mostrarTelaLogin() {
-        LoginMenuApp loginView = new LoginMenuApp(stage, this);
-        loginView.exibir();
+        new LoginMenuApp(stage, this).exibir();
     }
 
+    // ==========================================================
+    // AUTENTICAÇÃO
+    // ==========================================================
 
     public User processarLogin(String email, String senha) {
-        try{
-            User user = authenticate.login(email, senha);
-            System.out.println("Bem-vindo, " + user.getUsername() + " [" + user.getRole() + "]");
 
-            // Em vez de retornar para o while, nós já mandamos direcionar para o menu aqui!
+        try {
+
+            User user = authenticate.login(email, senha);
+
+            System.out.println(
+                    "Bem-vindo, " +
+                            user.getUsername() +
+                            " [" +
+                            user.getRole() +
+                            "]"
+            );
+
             direcionarParaMenu(user);
+
             return user;
 
         } catch (AuthenticationExceptionAcademic e) {
-            // Vamos reolançar a exceção ou tratar para a tela mostrar o erro em texto vermelho
-            throw new RuntimeException("Falha no login: " + e.getMessage());
-        } catch (IOException e) {
-            throw new RuntimeException("Erro ao ler arquivo: " + e.getMessage());
-    }
-}
 
-    public void direcionarParaMenu(User currentUser){
-        currentUser.getMenuApp().carregarMenu(this.stage,this);
+            throw new RuntimeException(
+                    "Falha no login: " + e.getMessage()
+            );
+
+        } catch (IOException e) {
+
+            throw new RuntimeException(
+                    "Erro ao ler arquivo: " + e.getMessage()
+            );
+        }
     }
-    // TUS-2409 (AC4): a tela JavaFX delega o registro de turma para cá,
-    // e o controller delega para o ClassService. A GUI não registra nada
-    // diretamente (AC5). Deixamos a AcademicSystemException subir para a
-    // tela poder mostrar o erro de validação.
+
+    public void direcionarParaMenu(User user) {
+        user.getMenuApp().carregarMenu(stage, this);
+    }
+
+    // ==========================================================
+    // TURMAS
+    // ==========================================================
+
     public void registrarTurma(Classroom classroom) {
         classService.registerClassroom(classroom);
     }
-    // TUS-2410 (AC6): a tela JavaFX delega o registro da avaliação para cá,
-// e o controller delega ao AssessmentService (AC7 - GUI sem regra de negócio).
-    public void registrarAvaliacao(Long classroomID, int tipo, double value, double weight) {
-        assessmentService.registerAssessment(classroomID, tipo, value, weight);
+
+    public List<Classroom> listarTurmas() {
+        return AcademicSystem
+                .getInstance()
+                .getClassrooms();
     }
-    // TUS-2411 (AC6): a tela delega a geração dos relatórios para cá,
-// e o controller delega ao ReportService.
+
+    // ==========================================================
+    // AVALIAÇÕES
+    // ==========================================================
+
+    public void registrarAvaliacao(
+            Long classroomID,
+            int tipo,
+            double value,
+            double weight) {
+
+        assessmentService.registerAssessment(
+                classroomID,
+                tipo,
+                value,
+                weight
+        );
+    }
+
+    // ==========================================================
+    // RELATÓRIOS
+    // ==========================================================
+
     public String gerarRelatorioResumo() {
         return reportService.generateClassAssessmentSummaryReport();
     }
+
     public String gerarRelatorioPeso() {
         return reportService.generateAssessmentWeightReport();
     }
+
     public String gerarRelatorioPersistencia() {
         return reportService.generatePersistenceConfigurationReport();
     }
-    // TUS-2412 (AC5): a tela delega a configuração para cá,
-    // e o controller delega ao PersistenceService.
+
+    // ==========================================================
+    // PERSISTÊNCIA
+    // ==========================================================
+
     public void configurarPersistencia(PersistenceType tipo) {
         persistenceService.setPersistenceType(tipo);
     }
+
     public PersistenceType getPersistenceType() {
         return persistenceService.getPersistenceType();
     }
-    // Save Data: delega ao PersistenceService, que salva no formato configurado.
-    // O log da operação já é feito dentro do repositório (TUS-2393).
+
     public void salvarDados() throws IOException {
         persistenceService.save();
     }
+
 }
