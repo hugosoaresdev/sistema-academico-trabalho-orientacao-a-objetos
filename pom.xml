@@ -15,12 +15,32 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <javafx.version>21.0.1</javafx.version>
+        <javafx.platform>win</javafx.platform>
         <jackson.version>2.18.2</jackson.version>
         <lombok.version>1.18.38</lombok.version>
         <hibernate.validator.version>8.0.1.Final</hibernate.validator.version>
         <junit.version>5.13.4</junit.version>
         <mockito.version>5.18.0</mockito.version>
     </properties>
+
+    <!-- Detecta o sistema operacional e ajusta o classifier do JavaFX automaticamente -->
+    <profiles>
+        <profile>
+            <id>windows</id>
+            <activation><os><family>windows</family></os></activation>
+            <properties><javafx.platform>win</javafx.platform></properties>
+        </profile>
+        <profile>
+            <id>linux</id>
+            <activation><os><family>unix</family></os></activation>
+            <properties><javafx.platform>linux</javafx.platform></properties>
+        </profile>
+        <profile>
+            <id>mac</id>
+            <activation><os><family>mac</family></os></activation>
+            <properties><javafx.platform>mac</javafx.platform></properties>
+        </profile>
+    </profiles>
 
     <dependencies>
         <dependency>
@@ -34,30 +54,30 @@
             <version>${javafx.version}</version>
         </dependency>
 
-        <!-- Binários NATIVOS do JavaFX para Linux/x86_64 (necessários dentro do contêiner Docker) -->
+        <!-- Binários NATIVOS do JavaFX, ajustados ao SO via ${javafx.platform} -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-graphics</artifactId>
             <version>${javafx.version}</version>
-            <classifier>linux</classifier>
+            <classifier>${javafx.platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
             <version>${javafx.version}</version>
-            <classifier>linux</classifier>
+            <classifier>${javafx.platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
             <version>${javafx.version}</version>
-            <classifier>linux</classifier>
+            <classifier>${javafx.platform}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-base</artifactId>
             <version>${javafx.version}</version>
-            <classifier>linux</classifier>
+            <classifier>${javafx.platform}</classifier>
         </dependency>
 
         <dependency>
@@ -127,14 +147,12 @@
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.14</version>
                 <executions>
-                    <!-- Prepara o agente que mede a cobertura enquanto os testes rodam -->
                     <execution>
                         <id>prepare-agent</id>
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
                     </execution>
-                    <!-- Gera o relatório (HTML + XML + CSV) ao final da fase de teste -->
                     <execution>
                         <id>report</id>
                         <phase>test</phase>
@@ -172,16 +190,6 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.5.3</version>
             </plugin>
-
-            <plugin>
-                <groupId>org.openjfx</groupId>
-                <artifactId>javafx-maven-plugin</artifactId>
-                <version>0.0.8</version>
-                <configuration>
-                    <mainClass>org.example.app.AcademicSystemApp</mainClass>
-                </configuration>
-            </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>

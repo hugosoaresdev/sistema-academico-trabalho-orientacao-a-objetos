@@ -1,0 +1,42 @@
+name: Release
+
+# AC1: dispara quando uma tag de release (ex: v1.0.0) é criada
+on:
+  push:
+    tags:
+      - "v*"
+
+# Permissão necessária para publicar no GitHub Releases (AC5)
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Configurar JDK 25
+        uses: actions/setup-java@v4
+        with:
+          java-version: '25'
+          distribution: 'temurin'
+          cache: maven
+
+      # AC2 + AC3: compila e roda os testes antes de gerar a release
+      - name: Build e testes com Maven
+        run: mvn clean verify
+
+      # AC4: gera o artefato (o fat-jar do shade plugin)
+      - name: Empacotar artefato
+        run: mvn package -DskipTests
+
+      # AC5: publica o(s) artefato(s) no GitHub Releases
+      - name: Publicar no GitHub Releases
+        uses: softprops/action-gh-release@v2
+        with:
+          files: target/academic-system-1.0-SNAPSHOT.jar
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
