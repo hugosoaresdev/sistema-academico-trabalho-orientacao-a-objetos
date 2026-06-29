@@ -1,0 +1,291 @@
+/* ==========================================================
+   SISTEMA ACADÊMICO
+   Tema Principal
+   ========================================================== */
+
+.root{
+
+    -fx-font-family: "Segoe UI";
+
+    -fx-background-color:
+            linear-gradient(to bottom,#F8FAFC,#E9EEF6);
+
+}
+
+/* ==========================================================
+   CARD
+   ========================================================== */
+
+.card{
+
+    -fx-background-color:white;
+
+    -fx-background-radius:18;
+
+    -fx-border-radius:18;
+
+    -fx-border-color:#DCE3EE;
+
+    -fx-border-width:1;
+
+    -fx-padding:35;
+
+    -fx-spacing:15;
+
+    -fx-effect:
+            dropshadow(
+                    gaussian,
+                    rgba(0,0,0,.18),
+                    18,
+                    0,
+                    0,
+                    6
+            );
+
+}
+
+/* ==========================================================
+   TÍTULOS
+   ========================================================== */
+
+.title{
+
+    -fx-font-size:28px;
+
+    -fx-font-weight:bold;
+
+    -fx-text-fill:#1E3A5F;
+
+}
+
+.subtitle{
+
+    -fx-font-size:14px;
+
+    -fx-text-fill:#64748B;
+
+}
+
+.label{
+
+    -fx-font-size:14px;
+
+}
+
+/* ==========================================================
+   CAMPOS
+   ========================================================== */
+
+.text-field,
+.password-field,
+.combo-box{
+
+    -fx-background-radius:10;
+
+    -fx-border-radius:10;
+
+    -fx-border-color:#CBD5E1;
+
+    -fx-border-width:1;
+
+    -fx-background-color:white;
+
+    -fx-padding:10;
+
+    -fx-font-size:14px;
+
+}
+
+.text-field:focused,
+.password-field:focused,
+.combo-box:focused{
+
+    -fx-border-color:#2563EB;
+
+    -fx-effect:
+            dropshadow(
+                    gaussian,
+                    rgba(37,99,235,.25),
+                    8,
+                    0,
+                    0,
+                    0
+            );
+
+}
+
+/* ==========================================================
+   BOTÕES DO MENU
+   ========================================================== */
+
+.menu-button{
+
+    -fx-background-color:#2563EB;
+
+    -fx-text-fill:white;
+
+    -fx-font-size:14px;
+
+    -fx-font-weight:bold;
+
+    -fx-background-radius:10;
+
+    -fx-padding:12;
+
+    -fx-cursor:hand;
+
+}
+
+.menu-button:hover{
+
+    -fx-background-color:#1D4ED8;
+
+}
+
+.menu-button:pressed{
+
+    -fx-background-color:#1E40AF;
+
+}
+
+/* ==========================================================
+   BOTÃO PADRÃO
+   ========================================================== */
+
+.button{
+
+    -fx-background-color:#2563EB;
+
+    -fx-text-fill:white;
+
+    -fx-font-size:14px;
+
+    -fx-font-weight:bold;
+
+    -fx-background-radius:10;
+
+    -fx-padding:12;
+
+    -fx-cursor:hand;
+
+}
+
+.button:hover{
+
+    -fx-background-color:#1D4ED8;
+
+}
+
+.button:pressed{
+
+    -fx-background-color:#1E40AF;
+
+}
+
+/* ==========================================================
+   LOGOUT
+   ========================================================== */
+
+.logout-button{
+
+    -fx-background-color:#DC2626;
+
+    -fx-text-fill:white;
+
+    -fx-font-weight:bold;
+
+    -fx-background-radius:10;
+
+    -fx-padding:12;
+
+}
+
+.logout-button:hover{
+
+    -fx-background-color:#B91C1C;
+
+}
+
+.logout-button:pressed{
+
+    -fx-background-color:#991B1B;
+
+}
+
+/* ==========================================================
+   MENSAGENS
+   ========================================================== */
+
+.success-message{
+
+    -fx-text-fill:#16A34A;
+
+    -fx-font-weight:bold;
+
+}
+
+.error-message{
+
+    -fx-text-fill:#DC2626;
+
+    -fx-font-weight:bold;
+
+}
+
+/* ==========================================================
+   TABLE VIEW
+   ========================================================== */
+
+.table-view{
+
+    -fx-background-radius:12;
+
+    -fx-border-radius:12;
+
+}
+
+.table-view .column-header{
+
+    -fx-background-color:#2563EB;
+
+}
+
+.table-view .column-header .label{
+
+    -fx-text-fill:white;
+
+    -fx-font-weight:bold;
+
+}
+
+/* ==========================================================
+   SCROLL
+   ========================================================== */
+
+.scroll-bar{
+
+    -fx-background-color:transparent;
+
+}
+
+.scroll-bar .thumb{
+
+    -fx-background-color:#C7D2FE;
+
+    -fx-background-radius:10;
+
+}
+
+/* ==========================================================
+   TOOLTIP
+   ========================================================== */
+
+.tooltip{
+
+    -fx-background-color:#1E293B;
+
+    -fx-text-fill:white;
+
+    -fx-background-radius:8;
+
+}
