@@ -5,7 +5,11 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.example.controller.AcademicSystemController;
@@ -15,63 +19,140 @@ public class StudentMenuApp implements MenuApp {
 
     private final User currentUser;
 
-    // Construtor que recebe o usuário (opcional, mas bom para seguir o padrão do seu getMenuApp)
     public StudentMenuApp(User user) {
         this.currentUser = user;
     }
 
     @Override
-    public void carregarMenu(Stage stage,AcademicSystemController controller) {
+    public void carregarMenu(Stage stage, AcademicSystemController controller) {
 
-        // --- 1. TÍTULO DO MENU ---
-        Label lblTitulo = new Label("ACADEMIC SYSTEM - STUDENT MENU");
-        lblTitulo.setStyle("-fx-font-weight: bold; -fx-font-size: 16px;" + " -fx-font-family: 'Segoe UI', Arial;");
+        //------------------------------------
+        // LOGO
+        //------------------------------------
 
-        lblTitulo.setMaxWidth(Double.MAX_VALUE);
-        lblTitulo.setAlignment(Pos.CENTER);
+        ImageView logo = new ImageView();
 
-        // --- 2. CRIANDO OS BOTÕES DE OPÇÃO ---
-        Button btnViewGrades = new Button("1. View My Grades");
-        Button btnLogout = new Button("0. Logout");
+        try {
+            logo.setImage(
+                    new Image(
+                            getClass().getResourceAsStream("/images/logo.png")
+                    )
+            );
+        } catch (Exception ignored) {
+        }
 
-        // Estilizando as opções comuns (largura máxima para preencher o VBox)
-        btnViewGrades.setMaxWidth(Double.MAX_VALUE);
-        btnViewGrades.setStyle("-fx-alignment: BASELINE_LEFT; -fx-padding: 8 15 8 15;");
+        logo.setFitWidth(110);
+        logo.setPreserveRatio(true);
 
-        // Estilizando o botão de Logout de forma independente (menor)
-        btnLogout.setStyle("-fx-text-fill: red; -fx-font-weight: bold; -fx-padding: 8 15 8 15;");
+        //------------------------------------
+        // TÍTULOS
+        //------------------------------------
 
-        // --- 3. CONFIGURANDO AS AÇÕES DOS BOTÕES ---
+        Label lblTitulo = new Label("Sistema Acadêmico");
+        lblTitulo.getStyleClass().add("title");
+
+        Label lblSubtitulo = new Label("Painel do Aluno");
+        lblSubtitulo.getStyleClass().add("subtitle");
+
+        //------------------------------------
+        // BOTÕES
+        //------------------------------------
+
+        Button btnViewGrades =
+                criarBotao("Visualizar Minhas Notas");
+
+        Button btnLogout = new Button("Logout");
+
+        btnLogout.setMaxWidth(Double.MAX_VALUE);
+        btnLogout.getStyleClass().add("logout-button");
+
+        //------------------------------------
+        // EVENTOS
+        //------------------------------------
+
         btnViewGrades.setOnAction(e -> {
-            System.out.println("\n[Em breve] Visualização das suas notas gráfica.");
+
+            System.out.println(
+                    "[Em breve] Visualização gráfica das notas."
+            );
+
         });
 
-        // --- 4. ALINHAMENTO DO LOGOUT FULL DIREITA ---
-        HBox containerLogout = new HBox();
-        containerLogout.setAlignment(Pos.CENTER_RIGHT); // Joga o botão para a extremidade direita
-        containerLogout.getChildren().add(btnLogout);
+        btnLogout.setOnAction(e ->
+                controller.logout(currentUser));
 
-        // --- 5. ORGANIZANDO O LAYOUT PRINCIPAL (VBox) ---
-        VBox layout = new VBox(15); // Espaçamento vertical entre os elementos
-        layout.setPadding(new Insets(25, 40, 25, 40)); // Margens internas da janela
-        layout.setStyle("-fx-background-color: #f4f4f4;");
+        //------------------------------------
+        // ESPAÇADOR
+        //------------------------------------
 
-        // Adiciona os componentes na ordem correta
-        layout.getChildren().addAll(
+        Region spacer = new Region();
+        VBox.setVgrow(spacer, Priority.ALWAYS);
+
+        //------------------------------------
+        // CARD
+        //------------------------------------
+
+        VBox card = new VBox(12);
+
+        card.setAlignment(Pos.TOP_CENTER);
+
+        card.getStyleClass().add("card");
+
+        card.getChildren().addAll(
+
+                logo,
+
                 lblTitulo,
+
+                lblSubtitulo,
+
                 btnViewGrades,
-                containerLogout // Adiciona o container do logout alinhado à direita
+
+                spacer,
+
+                btnLogout
+
         );
 
-        // --- CONFIGURANDO A AÇÃO DE LOGOUT ---
-        btnLogout.setOnAction(e -> {
-            System.out.println("Fazendo logout e retornando para a tela de login...");
-            controller.mostrarTelaLogin();
-        });
+        //------------------------------------
+        // ROOT
+        //------------------------------------
 
-        // --- 6. RENDERIZANDO A CENA ---
-        Scene cenaMenu = new Scene(layout, 450, 250); // Dimensão ideal para o menu compacto do estudante
-        stage.setScene(cenaMenu);
-        stage.setTitle("Academic System - Student Panel");
+        StackPane root = new StackPane(card);
+
+        root.setPadding(new Insets(30));
+
+        Scene scene = new Scene(root, 600, 550);
+
+        scene.getStylesheets().add(
+                getClass()
+                        .getResource("/css/style.css")
+                        .toExternalForm()
+        );
+
+        stage.getIcons().add(
+                new Image(
+                        getClass().getResourceAsStream("/images/logo.png")
+                )
+        );
+
+        stage.setTitle("Sistema Acadêmico");
+
+        stage.setScene(scene);
     }
+
+    /**
+     * Cria um botão padronizado.
+     */
+    private Button criarBotao(String texto) {
+
+        Button button = new Button(texto);
+
+        button.setMaxWidth(Double.MAX_VALUE);
+
+        button.getStyleClass().add("menu-button");
+
+        return button;
+    }
+
 }
